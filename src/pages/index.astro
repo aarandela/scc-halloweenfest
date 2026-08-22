@@ -1,0 +1,179 @@
+---
+import HeroArtwork from "../components/HeroArtwork.astro";
+import Icon from "../components/Icon.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { activities, event } from "../data/event";
+
+const description = `${event.dateDisplay} at ${event.venue}. A free community event with trick-or-treating, a costume contest, sneakers, vintage, music, games, vendors, and food.`;
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Festival",
+  name: event.name,
+  description: event.description,
+  startDate: "2026-10-24T14:00:00-05:00",
+  endDate: "2026-10-24T20:00:00-05:00",
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  eventStatus: "https://schema.org/EventScheduled",
+  isAccessibleForFree: true,
+  location: {
+    "@type": "Place",
+    name: event.venue,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "11200 Broadway St",
+      addressLocality: "Pearland",
+      addressRegion: "TX",
+      postalCode: "77584",
+      addressCountry: "US"
+    }
+  },
+  organizer: {
+    "@type": "Organization",
+    name: event.organizer,
+    email: event.contactEmail
+  },
+  offers: {
+    "@type": "Offer",
+    price: 0,
+    priceCurrency: "USD",
+    availability: "https://schema.org/InStock"
+  }
+};
+
+const iconNames = {
+  candy: "candy",
+  trophy: "trophy",
+  spark: "spark",
+  music: "music"
+} as const;
+---
+
+<BaseLayout title={`${event.name} | ${event.dateDisplay}`} {description} structuredData={structuredData}>
+  <main id="main-content">
+    <section class="hero" aria-labelledby="event-title">
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Free community event · Pearland, Texas</p>
+          <h1 id="event-title">Halloween <span>Festival</span></h1>
+          <p class="hero-lede">Costumes, candy, sneakers, vintage, music, games, food, and the local businesses that make it all possible.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#event">Plan your visit <Icon name="arrow" size={17} /></a>
+            <a class="button button-secondary" href="/partners/">Partner with us</a>
+          </div>
+        </div>
+        <HeroArtwork />
+      </div>
+    </section>
+
+    <div class="fact-strip" id="event">
+      <div class="container fact-grid">
+        <div class="fact"><Icon name="calendar" /><div><span>When</span><strong>{event.dateDisplay}</strong></div></div>
+        <div class="fact"><Icon name="clock" /><div><span>Time</span><strong>{event.timeDisplay}</strong></div></div>
+        <div class="fact"><Icon name="pin" /><div><span>Where</span><strong>{event.venue}</strong></div></div>
+        <div class="fact"><Icon name="ticket" /><div><span>Admission</span><strong>{event.admission}</strong></div></div>
+      </div>
+    </div>
+
+    <section class="section" aria-labelledby="happening-title">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">What’s happening</p>
+            <h2 id="happening-title">One afternoon.<br />A whole lot of fun.</h2>
+          </div>
+          <p>Bring the whole crew for a family-friendly celebration of Halloween, streetwear, local flavor, and community.</p>
+        </div>
+        <div class="activity-grid">
+          {activities.map((activity) => (
+            <article class="activity-card">
+              <div class="activity-icon"><Icon name={iconNames[activity.icon]} /></div>
+              <h3>{activity.title}</h3>
+              <p>{activity.description}</p>
+              <time>{activity.time}</time>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="two-paths" aria-label="Festival information by audience">
+      <div class="path-grid">
+        <article class="path-panel">
+          <p class="eyebrow">For families & friends</p>
+          <h2>Make a night of it.</h2>
+          <p>No tickets and no RSVP. Come for the candy, stay for the costume contest, music, shopping, and community.</p>
+          <ul class="chip-list" aria-label="Family event highlights">
+            <li>Free admission</li><li>Trick-or-treat</li><li>Costume contest</li><li>All ages</li>
+          </ul>
+          <a class="button button-light" href="#location">Get directions <Icon name="arrow" size={17} /></a>
+        </article>
+        <article class="path-panel">
+          <p class="eyebrow">For local businesses</p>
+          <h2>Show up for Pearland.</h2>
+          <p>Reach thousands of local families as a sponsor or vendor. Compare the published packages and contact the director from one dedicated page.</p>
+          <ul class="chip-list" aria-label="Business opportunity highlights">
+            <li>4,000+ past attendees</li><li>Sponsor packages</li><li>Vendor interest</li>
+          </ul>
+          <a class="button button-secondary" href="/partners/">Business opportunities <Icon name="arrow" size={17} /></a>
+        </article>
+      </div>
+    </section>
+
+    <section class="section venue-section" id="location" aria-labelledby="location-title">
+      <div class="container venue-grid">
+        <div>
+          <p class="eyebrow">Meet us in Pearland</p>
+          <h2 class="display-heading" id="location-title">Right in the heart of town.</h2>
+          <p>The festival takes over the Methodist Pavilion at Pearland Town Center. Trick-or-treating will take place at participating stores throughout the center.</p>
+          <a class="button button-primary" href={event.mapsUrl} target="_blank" rel="noreferrer">Open in maps <Icon name="arrow" size={17} /></a>
+        </div>
+        <div class="address-card">
+          <div class="pin-drawing"><Icon name="pin" size={76} /></div>
+          <strong>{event.venue}</strong>
+          <span>{event.address}</span>
+          <a href={event.mapsUrl} target="_blank" rel="noreferrer">View directions <Icon name="arrow" size={16} /></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="impact-band" aria-labelledby="impact-title">
+      <div class="container impact-inner">
+        <div class="impact-copy">
+          <span>Local businesses power this celebration</span>
+          <h2 id="impact-title">Put your brand where the community gathers.</h2>
+          <p>Sponsorships help create a safe, fun, and memorable experience for Pearland families.</p>
+        </div>
+        <div class="impact-stat">4,000+<span>Attended last year</span></div>
+      </div>
+    </section>
+
+    <section class="section" id="faq" aria-labelledby="faq-title">
+      <div class="container narrow">
+        <p class="eyebrow">Good to know</p>
+        <h2 class="display-heading" id="faq-title">Festival FAQ</h2>
+        <div class="faq-list">
+          <details>
+            <summary>Is the festival free?</summary>
+            <p>Yes. Admission is free to the public and no RSVP is required.</p>
+          </details>
+          <details>
+            <summary>When is the costume contest?</summary>
+            <p>The costume contest is scheduled for 5:00–6:00 PM during the festival.</p>
+          </details>
+          <details>
+            <summary>Where does trick-or-treating happen?</summary>
+            <p>Participating stores at Pearland Town Center will be handing out candy. Look for festival signage when you arrive.</p>
+          </details>
+          <details>
+            <summary>How can my business participate?</summary>
+            <p>Visit the <a href="/partners/">business opportunities page</a> to compare sponsorship levels or submit a sponsor/vendor interest form.</p>
+          </details>
+          <details>
+            <summary>Who can I contact with another question?</summary>
+            <p>Email <a href={`mailto:${event.contactEmail}`}>{event.contactEmail}</a> or follow {event.socialHandle}.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

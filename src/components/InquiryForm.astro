@@ -1,0 +1,227 @@
+---
+import { event, sponsorTiers } from "../data/event";
+
+const endpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT ?? "";
+---
+
+<div class="form-shell">
+  <div class="form-heading">
+    <p class="eyebrow">Start a conversation</p>
+    <h2 id="inquiry-title">How would you like to take part?</h2>
+    <p>Tell the festival team a little about your business. No payment or commitment is required.</p>
+  </div>
+
+  <form
+    class="inquiry-form"
+    action="/api/inquiries"
+    method="post"
+    data-inquiry-form
+    data-endpoint={endpoint}
+    data-contact-email={event.contactEmail}
+    novalidate
+  >
+    <fieldset class="choice-fieldset">
+      <legend>I’m interested in <span aria-hidden="true">*</span></legend>
+      <div class="choice-grid">
+        <label class="choice-card">
+          <input type="radio" name="inquiryType" value="sponsor" checked />
+          <span><strong>Sponsorship</strong><small>Brand visibility and community impact</small></span>
+        </label>
+        <label class="choice-card">
+          <input type="radio" name="inquiryType" value="vendor" />
+          <span><strong>Vending</strong><small>Sell or showcase at the festival</small></span>
+        </label>
+      </div>
+      <span class="field-error" data-error-for="inquiryType"></span>
+    </fieldset>
+
+    <div class="form-grid">
+      <label class="field">
+        <span>Your name <b aria-hidden="true">*</b></span>
+        <input name="contactName" autocomplete="name" aria-describedby="contactName-error" />
+        <small class="field-error" id="contactName-error" data-error-for="contactName"></small>
+      </label>
+      <label class="field">
+        <span>Business name <b aria-hidden="true">*</b></span>
+        <input name="businessName" autocomplete="organization" aria-describedby="businessName-error" />
+        <small class="field-error" id="businessName-error" data-error-for="businessName"></small>
+      </label>
+      <label class="field">
+        <span>Email <b aria-hidden="true">*</b></span>
+        <input type="email" name="email" autocomplete="email" inputmode="email" aria-describedby="email-error" />
+        <small class="field-error" id="email-error" data-error-for="email"></small>
+      </label>
+      <label class="field">
+        <span>Phone <em>Optional</em></span>
+        <input type="tel" name="phone" autocomplete="tel" />
+      </label>
+      <label class="field field-wide">
+        <span>Website or social profile <em>Optional</em></span>
+        <input type="url" name="website" inputmode="url" placeholder="https://" />
+      </label>
+    </div>
+
+    <div data-sponsor-fields>
+      <label class="field">
+        <span>Sponsorship level <b aria-hidden="true">*</b></span>
+        <select name="sponsorTier" aria-describedby="sponsorTier-error">
+          <option value="">Choose a level</option>
+          <option value="not-sure">Not sure yet — help me choose</option>
+          {sponsorTiers.map((tier) => <option value={tier.id}>{tier.name} — ${tier.price.toLocaleString()}</option>)}
+        </select>
+        <small class="field-error" id="sponsorTier-error" data-error-for="sponsorTier"></small>
+      </label>
+    </div>
+
+    <div data-vendor-fields hidden>
+      <label class="field">
+        <span>What does your business offer? <b aria-hidden="true">*</b></span>
+        <input name="vendorCategory" placeholder="For example: vintage apparel, desserts, art" aria-describedby="vendorCategory-error" />
+        <small class="field-error" id="vendorCategory-error" data-error-for="vendorCategory"></small>
+      </label>
+    </div>
+
+    <label class="field">
+      <span>Anything else we should know? <em>Optional</em></span>
+      <textarea name="message" rows="4" placeholder="Questions, goals, space needs, or other details"></textarea>
+    </label>
+
+    <div class="honeypot" aria-hidden="true">
+      <label>Company website <input name="company" tabindex="-1" autocomplete="off" /></label>
+    </div>
+
+    <label class="consent">
+      <input type="checkbox" name="consent" />
+      <span>I agree that Space City Collective may contact me about this inquiry. <b aria-hidden="true">*</b></span>
+    </label>
+    <small class="field-error" data-error-for="consent"></small>
+
+    <div class="form-footer">
+      <button class="button button-primary" type="submit">Send interest form</button>
+      <p>Prefer email? <a href={`mailto:${event.contactEmail}`}>{event.contactEmail}</a></p>
+    </div>
+    <p class="form-note">Online delivery is being connected. The form is ready for a future Cloudflare endpoint and will not claim to send until that endpoint is configured.</p>
+    <p class="form-status" data-form-status role="status" aria-live="polite"></p>
+  </form>
+</div>
+
+<script>
+  import { prepareInquiry, validateInquiry, type InquiryInput } from "../lib/inquiry";
+
+  const form = document.querySelector<HTMLFormElement>("[data-inquiry-form]");
+
+  if (form) {
+    const sponsorFields = form.querySelector<HTMLElement>("[data-sponsor-fields]");
+    const vendorFields = form.querySelector<HTMLElement>("[data-vendor-fields]");
+    const status = form.querySelector<HTMLElement>("[data-form-status]");
+    const submitButton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
+
+    const getInput = (name: string) => form.elements.namedItem(name) as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | null;
+
+    const getInquiryType = () => {
+      const selected = form.querySelector<HTMLInputElement>('input[name="inquiryType"]:checked');
+      return selected?.value === "vendor" ? "vendor" : "sponsor";
+    };
+
+    if (new URLSearchParams(window.location.search).get("interest") === "vendor") {
+      const vendorChoice = form.querySelector<HTMLInputElement>('input[name="inquiryType"][value="vendor"]');
+      if (vendorChoice) vendorChoice.checked = true;
+    }
+
+    const updateConditionalFields = () => {
+      const isSponsor = getInquiryType() === "sponsor";
+      if (sponsorFields) sponsorFields.hidden = !isSponsor;
+      if (vendorFields) vendorFields.hidden = isSponsor;
+      getInput("sponsorTier")?.toggleAttribute("aria-required", isSponsor);
+      getInput("vendorCategory")?.toggleAttribute("aria-required", !isSponsor);
+    };
+
+    const readInput = (): InquiryInput => ({
+      inquiryType: getInquiryType(),
+      contactName: getInput("contactName")?.value ?? "",
+      businessName: getInput("businessName")?.value ?? "",
+      email: getInput("email")?.value ?? "",
+      phone: getInput("phone")?.value ?? "",
+      website: getInput("website")?.value ?? "",
+      sponsorTier: getInput("sponsorTier")?.value ?? "",
+      vendorCategory: getInput("vendorCategory")?.value ?? "",
+      message: getInput("message")?.value ?? "",
+      consent: (getInput("consent") as HTMLInputElement | null)?.checked ?? false,
+      company: getInput("company")?.value ?? ""
+    });
+
+    const clearErrors = () => {
+      form.querySelectorAll<HTMLElement>("[data-error-for]").forEach((element) => {
+        element.textContent = "";
+      });
+      form.querySelectorAll<HTMLElement>("[aria-invalid]").forEach((element) => {
+        element.removeAttribute("aria-invalid");
+      });
+      if (status) status.textContent = "";
+    };
+
+    const showErrors = (errors: ReturnType<typeof validateInquiry>) => {
+      for (const [name, message] of Object.entries(errors)) {
+        const error = form.querySelector<HTMLElement>(`[data-error-for="${name}"]`);
+        if (error) error.textContent = message;
+        const input = getInput(name);
+        input?.setAttribute("aria-invalid", "true");
+      }
+      const firstInvalid = form.querySelector<HTMLElement>('[aria-invalid="true"]');
+      firstInvalid?.focus();
+      if (status) status.textContent = errors.form ?? "Please check the highlighted fields.";
+    };
+
+    form.addEventListener("change", (event) => {
+      const target = event.target as HTMLInputElement;
+      if (target.name === "inquiryType") updateConditionalFields();
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearErrors();
+
+      const input = readInput();
+      const errors = validateInquiry(input);
+      if (Object.keys(errors).length) {
+        showErrors(errors);
+        return;
+      }
+
+      const endpoint = form.dataset.endpoint;
+      if (!endpoint) {
+        if (status) {
+          status.textContent = `Your details look good. Online delivery is being connected; for now, email ${form.dataset.contactEmail ?? "the festival team"} to reach the festival team.`;
+        }
+        return;
+      }
+
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Sending…";
+      }
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(prepareInquiry(input))
+        });
+        if (!response.ok) throw new Error(`Inquiry endpoint returned ${response.status}`);
+
+        form.reset();
+        updateConditionalFields();
+        if (status) status.textContent = "Thank you. The festival team received your inquiry and will follow up soon.";
+      } catch {
+        if (status) status.textContent = "We couldn’t send your inquiry. Please try again or email the festival team directly.";
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = "Send interest form";
+        }
+      }
+    });
+
+    updateConditionalFields();
+  }
+</script>

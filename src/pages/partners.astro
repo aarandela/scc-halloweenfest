@@ -1,0 +1,124 @@
+---
+import Icon from "../components/Icon.astro";
+import InquiryForm from "../components/InquiryForm.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { event, sponsorBenefits, sponsorTiers } from "../data/event";
+
+const description = `Sponsor or vend at the ${event.name}. Compare sponsorship opportunities and send an interest form to the Space City Collective team.`;
+
+function priceLabel(price: number) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0
+  }).format(price);
+}
+---
+
+<BaseLayout title={`Business Opportunities | ${event.name}`} {description} canonicalPath="/partners/">
+  <main id="main-content">
+    <section class="partner-hero" aria-labelledby="partner-title">
+      <div class="container partner-hero-content">
+        <div>
+          <p class="eyebrow">Sponsor · vend · make an impact</p>
+          <h1 id="partner-title">Grow with the community.</h1>
+          <p class="hero-lede">Put your business in front of thousands of local families while helping create a safe, fun, and memorable Halloween experience.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#packages">Compare packages <Icon name="arrow" size={17} /></a>
+            <a class="button button-secondary" href="#inquiry">Send an inquiry</a>
+          </div>
+        </div>
+        <aside class="hero-side-note">
+          <strong>4,000+</strong>
+          <span>people attended last year. Your support helps the festival welcome even more of Pearland.</span>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="why-title">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Why participate</p>
+            <h2 id="why-title">Good for Pearland.<br />Good for business.</h2>
+          </div>
+          <p>Build real visibility by showing up in person, supporting local families, and joining one of the area’s most energetic community events.</p>
+        </div>
+        <div class="reason-grid">
+          <article class="reason-card"><Icon name="megaphone" size={32} /><h3>Great exposure</h3><p>Get your brand in front of thousands of local families before and during the festival.</p></article>
+          <article class="reason-card"><Icon name="people" size={32} /><h3>Support community</h3><p>Help create unforgettable memories and a free public event for families and kids.</p></article>
+          <article class="reason-card"><Icon name="growth" size={32} /><h3>Grow your business</h3><p>Build awareness, meet customers, and connect with other Pearland businesses.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section tiers-section" id="packages" aria-labelledby="packages-title">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Sponsorship packages</p>
+            <h2 id="packages-title">Choose your level of impact.</h2>
+          </div>
+          <p>Every level includes core event visibility. Higher tiers add on-site access, premium recognition, and custom promotion.</p>
+        </div>
+
+        <div class="tier-cards">
+          {sponsorTiers.map((tier, index) => (
+            <article class:list={["tier-card", { featured: index === 2 }]}>
+              <span class="tier-number">Level 0{index + 1}</span>
+              <h3>{tier.name}</h3>
+              <div class="tier-price">{priceLabel(tier.price)}</div>
+              <p>{tier.description}</p>
+            </article>
+          ))}
+        </div>
+
+        <div class="comparison-wrap" tabindex="0" role="region" aria-label="Scrollable sponsorship benefits comparison">
+          <table class="comparison-table">
+            <caption class="sr-only">Benefits included in each Space City Halloween Festival sponsorship level</caption>
+            <thead>
+              <tr>
+                <th scope="col">Benefit</th>
+                {sponsorTiers.map((tier) => <th scope="col">{tier.name}</th>)}
+              </tr>
+            </thead>
+            <tbody>
+              {sponsorBenefits.map((benefit) => (
+                <tr>
+                  <td>{benefit.label}</td>
+                  {benefit.tiers.map((value) => (
+                    <td>
+                      {value === false ? <span class="dash" aria-label="Not included">—</span> : value === "Included" ? <span class="check" aria-label="Included">✓</span> : <span class="benefit-detail">{value}</span>}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">Benefits shown are based on the published 2026 sponsorship flyer. The festival team will confirm availability and final details.</p>
+      </div>
+    </section>
+
+    <section class="section vendor-section" aria-labelledby="vendor-title">
+      <div class="container vendor-grid">
+        <div>
+          <p class="eyebrow">Vendor opportunities</p>
+          <h2 class="display-heading" id="vendor-title">Bring what you do to the festival.</h2>
+          <p>Vintage, streetwear, food, art, services, and other community businesses are welcome to express interest. Vendor pricing and requirements are not yet published, so tell the director what you offer and the team will follow up with availability and next steps.</p>
+          <a class="button button-primary" href="/partners/?interest=vendor#inquiry">Ask about vending <Icon name="arrow" size={17} /></a>
+        </div>
+        <div class="vendor-visual" aria-hidden="true">
+          <div class="vendor-canopy"></div>
+          <div class="vendor-table"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section form-section" id="inquiry" aria-labelledby="inquiry-title">
+      <div class="container">
+        <InquiryForm />
+      </div>
+    </section>
+  </main>
+</BaseLayout>

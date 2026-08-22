@@ -1,0 +1,51 @@
+<div class="hero-art" aria-hidden="true">
+  <svg viewBox="0 0 680 640" role="presentation">
+    <defs>
+      <radialGradient id="moon" cx="36%" cy="31%">
+        <stop offset="0" stop-color="#fff9ee" />
+        <stop offset=".58" stop-color="#d9c5e4" />
+        <stop offset="1" stop-color="#9571a8" />
+      </radialGradient>
+      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop stop-color="#2d2138" />
+        <stop offset="1" stop-color="#120f18" />
+      </linearGradient>
+      <linearGradient id="pumpkin" x1="0" x2="1">
+        <stop stop-color="#d8543f" />
+        <stop offset=".5" stop-color="#f17b58" />
+        <stop offset="1" stop-color="#c74638" />
+      </linearGradient>
+      <filter id="grain">
+        <feTurbulence type="fractalNoise" baseFrequency=".8" numOctaves="3" seed="12" />
+        <feColorMatrix values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 .12 0" />
+      </filter>
+    </defs>
+    <path fill="url(#sky)" d="M40 94h565v484H40z" />
+    <circle cx="400" cy="205" r="138" fill="url(#moon)" opacity=".93" />
+    <g fill="#bba8c9" opacity=".3">
+      <circle cx="351" cy="160" r="25" /><circle cx="439" cy="135" r="17" />
+      <circle cx="468" cy="224" r="34" /><circle cx="365" cy="247" r="13" />
+    </g>
+    <g fill="#15101b">
+      <path d="M225 150q25-30 48 1 24-29 50 1-16-7-25 10-23-19-47 0-8-17-26-12Z" />
+      <path d="M490 107q17-19 32 1 15-18 32 0-11-4-16 7-16-13-31 0-6-11-17-8Z" />
+      <path d="M301 85q10-12 20 0 10-11 20 0-7-3-10 5-10-9-20 0-3-7-10-5Z" />
+    </g>
+    <g fill="#0d0c11">
+      <path d="M41 431h66v147H41zM115 369h82v209h-82zM203 407h72v171h-72zM285 346h103v232H285zM398 391h71v187h-71zM480 321h124v257H480z" />
+      <path d="M128 369h18v-40h20v40M316 346h18v-55h22v55M518 321h22v-74h25v74" />
+    </g>
+    <g fill="#f08a60" opacity=".7">
+      <path d="M58 460h13v18H58zM83 460h13v18H83zM137 401h15v20h-15zM164 401h15v20h-15zM220 439h13v18h-13zM309 382h17v23h-17zM350 382h17v23h-17zM415 424h15v20h-15zM509 358h18v24h-18zM550 358h18v24h-18z" />
+    </g>
+    <g transform="translate(97 365)">
+      <ellipse cx="112" cy="122" rx="103" ry="94" fill="url(#pumpkin)" />
+      <path d="M112 29c-6-31 14-48 35-54-6 19-1 35 14 48-20-4-35 1-49 6Z" fill="#54704a" />
+      <path d="m53 106 37-18-10 36-27-18ZM168 106l-36-18 9 36 27-18ZM52 146q60 53 119-1-17 7-27-5-13 18-31 1-16 18-31 0-11 12-30 5Z" fill="#170f14" />
+      <path d="M112 32c-21 32-23 128 0 181M76 39c-30 38-34 118-8 156M148 39c30 38 34 118 8 156" fill="none" stroke="#a73e36" stroke-width="7" opacity=".75" />
+    </g>
+    <rect x="40" y="94" width="565" height="484" filter="url(#grain)" opacity=".42" />
+    <path d="M30 582h590" stroke="#f3ecdf" stroke-width="4" stroke-dasharray="2 13" opacity=".22" />
+  </svg>
+  <span class="art-stamp">Pearland<br />10.24.26</span>
+</div>

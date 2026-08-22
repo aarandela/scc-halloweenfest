@@ -1,8 +1,9 @@
 ---
-import HeroArtwork from "../components/HeroArtwork.astro";
 import Icon from "../components/Icon.astro";
+import VendorListing from "../components/VendorListing.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { activities, event } from "../data/event";
+import { vendors } from "../data/vendors";
 
 const description = `${event.dateDisplay} at ${event.venue}. A free community event with trick-or-treating, a costume contest, sneakers, vintage, music, games, vendors, and food.`;
 const structuredData = {
@@ -40,34 +41,45 @@ const structuredData = {
   }
 };
 
-const iconNames = {
-  candy: "candy",
-  trophy: "trophy",
-  spark: "spark",
-  music: "music"
-} as const;
 ---
 
 <BaseLayout title={`${event.name} | ${event.dateDisplay}`} {description} structuredData={structuredData}>
   <main id="main-content">
-    <section class="hero" aria-labelledby="event-title">
+    <section class="hero poster-hero" aria-labelledby="event-title">
       <div class="container hero-inner">
         <div class="hero-copy">
           <p class="eyebrow">Free community event · Pearland, Texas</p>
           <h1 id="event-title">Halloween <span>Festival</span></h1>
-          <p class="hero-lede">Costumes, candy, sneakers, vintage, music, games, food, and the local businesses that make it all possible.</p>
+          <p class="hero-lede">A free Saturday in Pearland with costumes, candy, sneakers, vintage, music, games, food, and local vendors.</p>
           <div class="hero-actions">
             <a class="button button-primary" href="#event">Plan your visit <Icon name="arrow" size={17} /></a>
             <a class="button button-secondary" href="/partners/">Partner with us</a>
           </div>
         </div>
-        <HeroArtwork />
+        <div class="event-bill" aria-label={`${event.dateDisplay}, ${event.timeDisplay}, ${event.venue}`}>
+          <div class="bill-topline"><span>Space City Collective presents</span><span>Free entry</span></div>
+          <div class="bill-date"><strong>24</strong><span>Oct<br />2026</span></div>
+          <div class="bill-rule"></div>
+          <p>{event.timeDisplay}</p>
+          <h2>Pearland<br />Town Center</h2>
+          <div class="bill-footer"><span>Methodist Pavilion</span><span>All ages</span></div>
+        </div>
       </div>
     </section>
 
     <div class="fact-strip" id="event">
       <div class="container fact-grid">
-        <div class="fact"><Icon name="calendar" /><div><span>When</span><strong>{event.dateDisplay}</strong></div></div>
+        <div class="fact">
+          <Icon name="calendar" />
+          <div>
+            <span>When</span>
+            <strong>{event.dateDisplay}</strong>
+            <div class="fact-calendar-links">
+              <a href={event.calendarDownloadUrl} download>Add to calendar</a>
+              <a href={event.googleCalendarUrl} target="_blank" rel="noreferrer">Google Calendar</a>
+            </div>
+          </div>
+        </div>
         <div class="fact"><Icon name="clock" /><div><span>Time</span><strong>{event.timeDisplay}</strong></div></div>
         <div class="fact"><Icon name="pin" /><div><span>Where</span><strong>{event.venue}</strong></div></div>
         <div class="fact"><Icon name="ticket" /><div><span>Admission</span><strong>{event.admission}</strong></div></div>
@@ -76,22 +88,44 @@ const iconNames = {
 
     <section class="section" aria-labelledby="happening-title">
       <div class="container">
-        <div class="section-heading">
+        <div class="section-heading program-heading">
           <div>
             <p class="eyebrow">What’s happening</p>
             <h2 id="happening-title">One afternoon.<br />A whole lot of fun.</h2>
           </div>
           <p>Bring the whole crew for a family-friendly celebration of Halloween, streetwear, local flavor, and community.</p>
         </div>
-        <div class="activity-grid">
-          {activities.map((activity) => (
-            <article class="activity-card">
-              <div class="activity-icon"><Icon name={iconNames[activity.icon]} /></div>
+        <div class="program-list">
+          {activities.map((activity, index) => (
+            <article class="program-item">
+              <span class="program-number">0{index + 1}</span>
               <h3>{activity.title}</h3>
               <p>{activity.description}</p>
               <time>{activity.time}</time>
             </article>
           ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section vendor-preview" aria-labelledby="vendor-preview-title">
+      <div class="container">
+        <div class="vendor-preview-heading">
+          <div>
+            <p class="eyebrow">Vendor lineup</p>
+            <h2 class="display-heading" id="vendor-preview-title">Who’ll be there.</h2>
+          </div>
+          <div>
+            <p class="sample-notice">Sample lineup for demonstration</p>
+            <p>Give attendees a reason to arrive early by showing them who they can shop, meet, and eat with at the festival.</p>
+          </div>
+        </div>
+        <div class="vendor-preview-grid">
+          {vendors.filter((vendor) => vendor.featured).map((vendor) => <VendorListing {vendor} compact />)}
+        </div>
+        <div class="vendor-preview-footer">
+          <a class="button button-light" href="/vendors/">See the full vendor directory <Icon name="arrow" size={17} /></a>
+          <a href="/partners/?interest=vendor#inquiry">Interested in vending?</a>
         </div>
       </div>
     </section>
@@ -142,6 +176,7 @@ const iconNames = {
           <span>Local businesses power this celebration</span>
           <h2 id="impact-title">Put your brand where the community gathers.</h2>
           <p>Sponsorships help create a safe, fun, and memorable experience for Pearland families.</p>
+          <a class="button button-impact" href="/partners/">Explore sponsorships <Icon name="arrow" size={17} /></a>
         </div>
         <div class="impact-stat">4,000+<span>Attended last year</span></div>
       </div>

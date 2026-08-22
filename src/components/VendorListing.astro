@@ -1,0 +1,26 @@
+---
+import type { VendorListing as Vendor } from "../data/vendors";
+
+interface Props {
+  vendor: Vendor;
+  compact?: boolean;
+}
+
+const { vendor, compact = false } = Astro.props;
+---
+
+<article
+  class:list={["vendor-listing", { "vendor-listing-compact": compact }]}
+  data-vendor-card
+  data-category={vendor.category}
+>
+  <div class="vendor-mark" aria-hidden="true"><span>{vendor.monogram}</span></div>
+  <div class="vendor-listing-copy">
+    <div class="vendor-meta">
+      <span>{vendor.category}</span>
+      <span class="sample-label">{vendor.statusLabel}</span>
+    </div>
+    <h3>{vendor.name}</h3>
+    <p>{vendor.description}</p>
+  </div>
+</article>

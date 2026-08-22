@@ -1,6 +1,6 @@
 # Space City Halloween Festival
 
-A two-page event website built with Astro for the October 24, 2026 Space City Halloween Festival in Pearland, Texas.
+A three-page event website built with Astro for the October 24, 2026 Space City Halloween Festival in Pearland, Texas.
 
 ## Local development
 
@@ -24,7 +24,12 @@ The end-to-end command builds the site, starts a local static server, and checks
 ## Routes
 
 - `/` — public event guide
+- `/vendors/` — filterable public vendor directory
 - `/partners/` — sponsorship packages, vendor information, and inquiry form
+
+Placeholder vendor listings live in `src/data/vendors.ts`. Replace each sample object with confirmed vendor details as the roster arrives; the homepage preview and full directory read from the same data source.
+
+The site self-hosts Latin WOFF2 builds of Anton and Inter in `public/fonts/` under the included SIL Open Font License files. The public event page also ships an `.ics` calendar download and a Google Calendar link.
 
 ## Form integration
 
@@ -36,5 +41,5 @@ If the variable is absent, the form validates locally and directs the user to `s
 
 ## Production metadata
 
-Set `SITE` to the final public origin, such as `https://festival.example.com`, so Astro can emit the canonical URL. Deployment and Cloudflare project configuration are intentionally left to the site owner.
+Set `SITE` to the final public origin, such as `https://festival.example.com`, so Astro can emit canonical and absolute social-image URLs. The 1200 × 630 sharing image lives at `public/og-image.png`. Deployment and Cloudflare project configuration are intentionally left to the site owner.
 # scc-halloweenfest

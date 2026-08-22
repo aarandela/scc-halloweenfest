@@ -1,0 +1,99 @@
+---
+import Icon from "../components/Icon.astro";
+import VendorListing from "../components/VendorListing.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { event } from "../data/event";
+import { vendorCategories, vendors } from "../data/vendors";
+
+const description = `Explore the vendor lineup for the ${event.name} at Pearland Town Center.`;
+---
+
+<BaseLayout title={`Vendor Lineup | ${event.name}`} {description} canonicalPath="/vendors/">
+  <main id="main-content">
+    <section class="directory-hero" aria-labelledby="directory-title">
+      <div class="container directory-hero-grid">
+        <div>
+          <p class="eyebrow">Shop · eat · meet local</p>
+          <h1 id="directory-title">Who’ll be there.</h1>
+        </div>
+        <div class="directory-intro">
+          <p class="sample-notice">Sample lineup for demonstration</p>
+          <p>Use this directory to introduce every vendor before event day. Real names, logos, descriptions, and social links can replace these samples as businesses are confirmed.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section directory-section" aria-label="Festival vendor directory">
+      <div class="container">
+        <div class="vendor-toolbar">
+          <p>Browse by category</p>
+          <div class="vendor-filters" aria-label="Filter vendors by category">
+            {vendorCategories.map((category, index) => (
+              <button
+                type="button"
+                data-vendor-filter={category}
+                aria-pressed={index === 0 ? "true" : "false"}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <p class="filter-status sr-only" data-filter-status role="status" aria-live="polite"></p>
+        <div class="vendor-directory-grid">
+          {vendors.map((vendor) => <VendorListing {vendor} />)}
+        </div>
+
+        <div class="directory-cta">
+          <div>
+            <p class="eyebrow">Don’t see your business?</p>
+            <h2>Ask about joining the lineup.</h2>
+          </div>
+          <a class="button button-primary" href="/partners/?interest=vendor#inquiry">Vendor interest form <Icon name="arrow" size={17} /></a>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  const filters = document.querySelectorAll<HTMLButtonElement>("[data-vendor-filter]");
+  const cards = document.querySelectorAll<HTMLElement>("[data-vendor-card]");
+  const status = document.querySelector<HTMLElement>("[data-filter-status]");
+
+  const applyCategory = (category: string, updateUrl: boolean) => {
+    const selectedFilter = Array.from(filters).find(
+      (filter) => filter.dataset.vendorFilter === category
+    );
+    if (!selectedFilter) return;
+
+    let visibleCount = 0;
+    filters.forEach((button) => button.setAttribute("aria-pressed", String(button === selectedFilter)));
+    cards.forEach((card) => {
+      const isVisible = category === "All" || card.dataset.category === category;
+      card.hidden = !isVisible;
+      if (isVisible) visibleCount += 1;
+    });
+
+    if (updateUrl) {
+      const url = new URL(window.location.href);
+      if (category === "All") url.searchParams.delete("category");
+      else url.searchParams.set("category", category);
+      window.history.replaceState({}, "", url);
+    }
+
+    if (status) {
+      status.textContent = `${visibleCount} sample ${visibleCount === 1 ? "vendor" : "vendors"} shown for ${category}.`;
+    }
+  };
+
+  filters.forEach((filter) => {
+    filter.addEventListener("click", () => {
+      applyCategory(filter.dataset.vendorFilter ?? "All", true);
+    });
+  });
+
+  const requestedCategory = new URLSearchParams(window.location.search).get("category");
+  if (requestedCategory) applyCategory(requestedCategory, false);
+</script>

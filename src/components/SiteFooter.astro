@@ -5,12 +5,15 @@ import { event } from "../data/event";
 <footer class="site-footer">
   <div class="container footer-grid">
     <div>
-      <a class="brand footer-brand" href="/" aria-label="Space City Halloween Festival home">
-        <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
-          <path d="m20 1 4.3 13.6L39 20l-14.7 4.7L20 39l-4.6-14.3L1 20l14.4-5.4L20 1Z"></path>
-          <circle cx="20" cy="20" r="4.5"></circle>
-        </svg>
-        <span><strong>Space City</strong><small>Halloween Festival</small></span>
+      <a class="brand brand-artwork footer-brand" href="/" aria-label="Space City Halloween Festival home">
+        <span class="brand-logo-crop">
+          <img
+            src="/space-city-collective-logo.jpg"
+            alt="Space City Collective"
+            width="438"
+            height="438"
+          />
+        </span>
       </a>
       <p class="footer-note">A free community celebration presented by {event.organizer}.</p>
     </div>
@@ -19,6 +22,7 @@ import { event } from "../data/event";
       <div>
         <p class="footer-label">Explore</p>
         <a href="/#event">Event details</a>
+        <a href="/vendors/">Vendor lineup</a>
         <a href="/partners/">Business opportunities</a>
         <a href="/#faq">Frequently asked questions</a>
       </div>
@@ -33,5 +37,6 @@ import { event } from "../data/event";
   <div class="container footer-bottom">
     <span>© 2026 {event.organizer}</span>
     <span>Sponsors make this event possible for the kids.</span>
+    <a class="footer-credit" href="https://arandela.co">Built by <strong>Arandela &amp; Co.</strong></a>
   </div>
 </footer>

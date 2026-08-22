@@ -12,6 +12,7 @@ interface Props {
 
 const { title, description, canonicalPath = "/", structuredData } = Astro.props;
 const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site) : undefined;
+const socialImageUrl = Astro.site ? new URL("/og-image.png", Astro.site).toString() : "/og-image.png";
 ---
 
 <!doctype html>
@@ -25,9 +26,16 @@ const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site) : undefined
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:site_name" content="Space City Halloween Festival" />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={socialImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Space City Halloween Festival — October 24, 2026 at Pearland Town Center" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={socialImageUrl} />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/anton-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
     <title>{title}</title>
     {structuredData && (
       <script type="application/ld+json" is:inline set:html={JSON.stringify(structuredData)} />

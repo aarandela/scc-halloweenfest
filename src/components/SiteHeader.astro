@@ -5,23 +5,41 @@ interface Props {
 
 const { currentPath } = Astro.props;
 const onPartners = currentPath.startsWith("/partners");
+const onVendors = currentPath.startsWith("/vendors");
 ---
 
 <header class="site-header">
   <div class="container header-inner">
-    <a class="brand" href="/" aria-label="Space City Halloween Festival home">
-      <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true">
-        <path d="m20 1 4.3 13.6L39 20l-14.7 4.7L20 39l-4.6-14.3L1 20l14.4-5.4L20 1Z"></path>
-        <circle cx="20" cy="20" r="4.5"></circle>
-      </svg>
-      <span><strong>Space City</strong><small>Halloween Festival</small></span>
+    <a class="brand brand-artwork" href="/" aria-label="Space City Halloween Festival home">
+      <span class="brand-logo-crop">
+        <img
+          src="/space-city-collective-logo.jpg"
+          alt="Space City Collective"
+          width="438"
+          height="438"
+        />
+      </span>
     </a>
 
     <nav class="desktop-nav" aria-label="Primary navigation">
-      <a href="/#event" aria-current={!onPartners ? "page" : undefined}>Event guide</a>
+      <a href="/#event" aria-current={!onPartners && !onVendors ? "page" : undefined}>Event guide</a>
+      <a href="/vendors/" aria-current={onVendors ? "page" : undefined}>Vendors</a>
       <a href="/partners/" aria-current={onPartners ? "page" : undefined}>For businesses</a>
       <a href="/#faq">FAQ</a>
     </nav>
+
+    <details class="mobile-nav">
+      <summary>
+        <span class="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>Menu</span>
+      </summary>
+      <nav aria-label="Mobile navigation">
+        <a href="/#event" aria-current={!onPartners && !onVendors ? "page" : undefined}>Event guide</a>
+        <a href="/vendors/" aria-current={onVendors ? "page" : undefined}>Vendors</a>
+        <a href="/partners/" aria-current={onPartners ? "page" : undefined}>For businesses</a>
+        <a href="/#faq">FAQ</a>
+      </nav>
+    </details>
 
     <a class="button button-small header-cta" href={onPartners ? "#inquiry" : "/partners/"}>
       {onPartners ? "Send an inquiry" : "Partner with us"}

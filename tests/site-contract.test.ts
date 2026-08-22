@@ -29,9 +29,10 @@ describe("site structure", () => {
   it("self-hosts the display and body fonts used by the design", () => {
     const css = readFileSync("src/styles/global.css", "utf8");
 
-    expect(existsSync("public/fonts/anton-latin.woff2")).toBe(true);
+    expect(existsSync("public/fonts/barlow-condensed-latin-italic.woff2")).toBe(true);
     expect(existsSync("public/fonts/inter-latin.woff2")).toBe(true);
-    expect(css).toContain('font-family: "Anton"');
+    expect(css).toContain('font-family: "Barlow Condensed"');
+    expect(css).toContain('--headline: "Barlow Condensed"');
     expect(css).toContain('font-family: "Inter"');
     expect(css.match(/font-display: swap/g)).toHaveLength(2);
   });

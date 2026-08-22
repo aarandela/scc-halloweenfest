@@ -111,6 +111,28 @@ test("the mobile home headline respects the page gutter", async ({ page }) => {
   expect(bounds.right).toBeLessThanOrEqual(bounds.viewport - 8);
 });
 
+test("mobile display type stays open and readable", async ({ page }) => {
+  test.skip((page.viewportSize()?.width ?? 1000) > 720, "Mobile-only typography check");
+  await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
+
+  for (const selector of [".event-bill h2", ".program-heading h2"]) {
+    const typography = await page.locator(selector).evaluate((heading) => {
+      const styles = getComputedStyle(heading);
+      const fontSize = Number.parseFloat(styles.fontSize);
+      return {
+        family: styles.fontFamily,
+        lineHeightRatio: Number.parseFloat(styles.lineHeight) / fontSize,
+        trackingRatio: Number.parseFloat(styles.letterSpacing) / fontSize
+      };
+    });
+
+    expect(typography.family).toContain("Barlow Condensed");
+    expect(typography.lineHeightRatio).toBeGreaterThanOrEqual(0.88);
+    expect(typography.trackingRatio).toBeGreaterThanOrEqual(-0.02);
+  }
+});
+
 test("mobile visitors can reach every primary destination from the header", async ({ page }) => {
   test.skip((page.viewportSize()?.width ?? 1000) > 920, "Mobile-only navigation check");
   await page.goto("/");

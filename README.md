@@ -29,7 +29,7 @@ The end-to-end command builds the site, starts a local static server, and checks
 
 Placeholder vendor listings live in `src/data/vendors.ts`. Replace each sample object with confirmed vendor details as the roster arrives; the homepage preview and full directory read from the same data source.
 
-The site self-hosts Latin WOFF2 builds of Anton and Inter in `public/fonts/` under the included SIL Open Font License files. The public event page also ships an `.ics` calendar download and a Google Calendar link.
+The site self-hosts Latin WOFF2 builds of Barlow Condensed Italic and Inter in `public/fonts/` under the included SIL Open Font License files. The public event page also ships an `.ics` calendar download and a Google Calendar link.
 
 ## Form integration
 

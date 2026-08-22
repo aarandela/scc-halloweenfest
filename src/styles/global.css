@@ -1,8 +1,8 @@
 @font-face {
-  font-family: "Anton";
-  src: url("/fonts/anton-latin.woff2") format("woff2");
-  font-style: normal;
-  font-weight: 400;
+  font-family: "Barlow Condensed";
+  src: url("/fonts/barlow-condensed-latin-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 800;
   font-display: swap;
 }
 
@@ -29,7 +29,7 @@
   --green: #829d72;
   --radius: 1.25rem;
   --shadow: 0 1.5rem 5rem rgb(0 0 0 / 25%);
-  --headline: "Anton", Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  --headline: "Barlow Condensed", Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
   --body: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
@@ -2040,7 +2040,9 @@ h3 {
 
 @media (max-width: 720px) {
   .poster-hero h1 {
-    font-size: clamp(4.5rem, 23vw, 7.5rem);
+    font-size: clamp(4.5rem, 22vw, 7.5rem);
+    letter-spacing: -0.02em;
+    line-height: 0.88;
   }
 
   .event-bill {
@@ -2050,6 +2052,17 @@ h3 {
 
   .bill-date strong {
     font-size: clamp(7rem, 35vw, 10rem);
+  }
+
+  .event-bill h2 {
+    letter-spacing: -0.01em;
+    line-height: 0.9;
+  }
+
+  .section-heading h2,
+  .display-heading {
+    letter-spacing: -0.01em;
+    line-height: 0.96;
   }
 
   .program-item,

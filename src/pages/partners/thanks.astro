@@ -1,0 +1,40 @@
+---
+import Icon from "../../components/Icon.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { event } from "../../data/event";
+
+const description = `Your ${event.name} business inquiry was received.`;
+---
+
+<BaseLayout
+  title={`Inquiry Received | ${event.name}`}
+  {description}
+  canonicalPath="/partners/thanks/"
+  noindex
+>
+  <main id="main-content" class="thanks-page">
+    <section class="thanks-panel" aria-labelledby="thanks-title">
+      <div class="container thanks-grid">
+        <div class="thanks-mark" aria-hidden="true">
+          <span>✓</span>
+        </div>
+        <div class="thanks-copy">
+          <p class="eyebrow">Message sent</p>
+          <h1 id="thanks-title">We received your inquiry.</h1>
+          <p class="hero-lede">
+            Thanks for reaching out. The Space City Collective team will review your information and follow up with next steps.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="/" data-track-event="thank_you_cta_clicked" data-track-destination="event_guide">
+              Event guide <Icon name="arrow" size={17} />
+            </a>
+            <a class="button button-secondary" href="/partners/" data-track-event="thank_you_cta_clicked" data-track-destination="business_opportunities">
+              Back to business opportunities
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+

@@ -8,24 +8,56 @@ test("the vendor call to action opens a vendor-ready form", async ({ page }) => 
   await expect(page.getByRole("radio", { name: /vending/i })).toBeChecked();
   await expect(page.getByLabel(/what does your business offer/i)).toBeVisible();
   await expect(page.getByLabel(/sponsorship level/i)).toBeHidden();
+
+  await page.getByLabel(/what does your business offer/i).selectOption("Other");
+  await expect(page.getByLabel(/describe what your business offers/i)).toBeVisible();
 });
 
-test("the inquiry form validates conditionally and never fakes delivery", async ({ page }) => {
+test("the inquiry form validates conditionally and sends through Web3Forms", async ({ page }) => {
+  await page.route("https://api.web3forms.com/submit", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ success: true, message: "Email sent successfully!" })
+    });
+  });
   await page.goto("/partners/?interest=vendor#inquiry");
   await page.getByRole("button", { name: /send interest form/i }).click();
 
   await expect(page.getByText("Enter your name.")).toBeVisible();
-  await expect(page.getByText("Tell us what your business offers.")).toBeVisible();
+  await expect(page.getByText("Choose the category that best fits your business.")).toBeVisible();
 
   await page.getByLabel(/your name/i).fill("Jamie Rivera");
   await page.getByLabel(/business name/i).fill("Pearland Vintage");
   await page.getByLabel(/^email/i).fill("jamie@example.com");
-  await page.getByLabel(/what does your business offer/i).fill("Vintage clothing");
+  await page.getByLabel(/what does your business offer/i).selectOption("Retail & merchandise");
   await page.getByLabel(/space city collective may contact me/i).check();
+  await page.locator('input[name="access_key"]').evaluate((input) => {
+    if (input instanceof HTMLInputElement) input.value = "test-access-key";
+  });
+  await page.locator("[data-inquiry-form]").evaluate((form) => {
+    if (form instanceof HTMLFormElement) {
+      form.dataset.configured = "true";
+      form.dataset.requiresTurnstile = "false";
+    }
+  });
   await page.getByRole("button", { name: /send interest form/i }).click();
 
-  await expect(page.getByRole("status")).toContainText("Online delivery is being connected");
-  await expect(page.getByRole("status")).not.toContainText("received your inquiry");
+  await expect(page).toHaveURL(/\/partners\/thanks\/$/);
+  await expect(page.getByRole("heading", { name: /we received your inquiry/i })).toBeVisible();
+});
+
+test("campaign tags survive internal navigation and reach the inquiry form", async ({ page }) => {
+  await page.goto(
+    "/?utm_source=instagram&utm_medium=social&utm_campaign=halloween-2026&utm_content=costume-contest-post"
+  );
+  await page.locator(".poster-hero").getByRole("link", { name: /partner with us/i }).click();
+
+  await expect(page.locator('input[name="campaign_source"]')).toHaveValue("instagram");
+  await expect(page.locator('input[name="campaign_medium"]')).toHaveValue("social");
+  await expect(page.locator('input[name="campaign_name"]')).toHaveValue("halloween-2026");
+  await expect(page.locator('input[name="campaign_content"]')).toHaveValue("costume-contest-post");
+  await expect(page.locator('input[name="campaign_landing_page"]')).toHaveValue("/");
 });
 
 test("the pages do not overflow the viewport", async ({ page }) => {
@@ -140,7 +172,7 @@ test("mobile visitors can reach every primary destination from the header", asyn
 
   const mobileNavigation = page.locator(".mobile-nav nav");
   await expect(mobileNavigation.getByRole("link", { name: "Event guide" })).toBeVisible();
-  await expect(mobileNavigation.getByRole("link", { name: "Vendors" })).toBeVisible();
+  await expect(mobileNavigation.getByRole("link", { name: "Vendors" })).toHaveCount(0);
   await expect(mobileNavigation.getByRole("link", { name: "For businesses" })).toBeVisible();
   await expect(mobileNavigation.getByRole("link", { name: "FAQ" })).toBeVisible();
 });
@@ -160,15 +192,8 @@ test("the desktop impact band has vertical breathing room", async ({ page }) => 
   expect(padding.bottom).toBeGreaterThanOrEqual(32);
 });
 
-test("vendor categories filter the directory and create shareable URLs", async ({ page }) => {
+test("the unpublished vendor directory redirects without exposing samples", async ({ page }) => {
   await page.goto("/vendors/");
-  await page.getByRole("button", { name: "Food & drink" }).click();
-
-  await expect(page.locator("[data-vendor-card]:visible")).toHaveCount(2);
-  await expect(page.getByRole("button", { name: "Food & drink" })).toHaveAttribute("aria-pressed", "true");
-  await expect(page).toHaveURL(/category=Food/);
-
-  await page.goto("/vendors/?category=Vintage");
-  await expect(page.locator("[data-vendor-card]:visible")).toHaveCount(1);
-  await expect(page.getByRole("button", { name: "Vintage" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByText("Sample lineup for demonstration")).toHaveCount(0);
 });

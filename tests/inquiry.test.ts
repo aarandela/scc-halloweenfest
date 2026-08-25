@@ -10,6 +10,7 @@ const sponsorInquiry: InquiryInput = {
   website: "",
   sponsorTier: "event-partner",
   vendorCategory: "",
+  vendorOtherDescription: "",
   message: "  Please send next steps.  ",
   consent: true,
   company: ""
@@ -41,16 +42,28 @@ describe("inquiry validation", () => {
     expect(validateInquiry({ ...sponsorInquiry, sponsorTier: "" }).sponsorTier).toBeDefined();
   });
 
-  it("requires a business category for vendor inquiries", () => {
+  it("accepts broad vendor categories and requires details for Other", () => {
     const vendorInquiry: InquiryInput = {
       ...sponsorInquiry,
       inquiryType: "vendor",
       sponsorTier: "",
-      vendorCategory: ""
+      vendorCategory: "",
+      vendorOtherDescription: ""
     };
 
     expect(validateInquiry(vendorInquiry).vendorCategory).toBeDefined();
-    expect(validateInquiry({ ...vendorInquiry, vendorCategory: "Vintage apparel" })).toEqual({});
+    expect(validateInquiry({ ...vendorInquiry, vendorCategory: "Retail & merchandise" })).toEqual({});
+    expect(
+      validateInquiry({ ...vendorInquiry, vendorCategory: "Vintage apparel" }).vendorCategory
+    ).toBeDefined();
+    expect(validateInquiry({ ...vendorInquiry, vendorCategory: "Other" }).vendorOtherDescription).toBeDefined();
+    expect(
+      validateInquiry({
+        ...vendorInquiry,
+        vendorCategory: "Other",
+        vendorOtherDescription: "Mobile pet adoption booth"
+      })
+    ).toEqual({});
   });
 
   it("silently rejects honeypot submissions", () => {
@@ -67,5 +80,26 @@ describe("inquiry payload", () => {
       businessName: "Analytical Engines",
       message: "Please send next steps."
     });
+  });
+
+  it("includes an Other vendor description only when it applies", () => {
+    expect(prepareInquiry({
+      ...sponsorInquiry,
+      inquiryType: "vendor",
+      sponsorTier: "",
+      vendorCategory: "Other",
+      vendorOtherDescription: "  Kids activity booth  "
+    })).toMatchObject({
+      vendorCategory: "Other",
+      vendorOtherDescription: "Kids activity booth"
+    });
+
+    expect(prepareInquiry({
+      ...sponsorInquiry,
+      inquiryType: "vendor",
+      sponsorTier: "",
+      vendorCategory: "Food & beverage",
+      vendorOtherDescription: "Should not be included"
+    }).vendorOtherDescription).toBe("");
   });
 });

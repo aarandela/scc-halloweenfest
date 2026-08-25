@@ -1,5 +1,6 @@
 ---
 import { event } from "../data/event";
+import { vendorDirectoryEnabled } from "../config/features";
 ---
 
 <footer class="site-footer">
@@ -22,14 +23,21 @@ import { event } from "../data/event";
       <div>
         <p class="footer-label">Explore</p>
         <a href="/#event">Event details</a>
-        <a href="/vendors/">Vendor lineup</a>
+        {vendorDirectoryEnabled && <a href="/vendors/">Vendor lineup</a>}
         <a href="/partners/">Business opportunities</a>
         <a href="/#faq">Frequently asked questions</a>
       </div>
       <div>
         <p class="footer-label">Connect</p>
         <a href={`mailto:${event.contactEmail}`}>{event.contactEmail}</a>
-        <span>{event.socialHandle}</span>
+        <a
+          href={event.instagramUrl}
+          target="_blank"
+          rel="noreferrer"
+          data-track-event="social_link_clicked"
+          data-track-platform="instagram"
+          data-track-placement="site_footer"
+        >{event.socialHandle}</a>
         <span>Pearland, Texas</span>
       </div>
     </div>

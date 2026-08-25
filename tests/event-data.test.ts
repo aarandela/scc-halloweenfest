@@ -17,13 +17,18 @@ describe("event content", () => {
       expect.arrayContaining([
         "Trick-or-treat",
         "Costume contest",
-        "Sneakers & vintage",
+        "Local vendors & makers",
         "Music, games & food"
       ])
     );
     expect(activities.find((activity) => activity.title === "Costume contest")?.time).toBe(
       "5:00–6:00 PM"
     );
+  });
+
+  it("uses the official Space City Collective Instagram profile", () => {
+    expect(event.socialHandle).toBe("@space_citycollective");
+    expect(event.instagramUrl).toBe("https://www.instagram.com/space_citycollective/");
   });
 });
 

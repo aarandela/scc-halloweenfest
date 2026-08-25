@@ -1,3 +1,5 @@
+import { isVendorInquiryCategory } from "../data/vendors";
+
 export type InquiryType = "sponsor" | "vendor";
 
 export interface InquiryInput {
@@ -9,6 +11,7 @@ export interface InquiryInput {
   website: string;
   sponsorTier: string;
   vendorCategory: string;
+  vendorOtherDescription: string;
   message: string;
   consent: boolean;
   company: string;
@@ -39,8 +42,15 @@ export function validateInquiry(input: InquiryInput): InquiryErrors {
   if (input.inquiryType === "sponsor" && !input.sponsorTier) {
     errors.sponsorTier = "Choose a sponsorship level or select ‘Not sure yet’.";
   }
-  if (input.inquiryType === "vendor" && !input.vendorCategory.trim()) {
-    errors.vendorCategory = "Tell us what your business offers.";
+  if (input.inquiryType === "vendor" && !isVendorInquiryCategory(input.vendorCategory.trim())) {
+    errors.vendorCategory = "Choose the category that best fits your business.";
+  }
+  if (
+    input.inquiryType === "vendor" &&
+    input.vendorCategory === "Other" &&
+    !input.vendorOtherDescription.trim()
+  ) {
+    errors.vendorOtherDescription = "Briefly describe what your business offers.";
   }
   if (!input.consent) errors.consent = "Confirm that the festival team may contact you.";
 
@@ -58,6 +68,10 @@ export function prepareInquiry(input: InquiryInput) {
     website: input.website.trim(),
     sponsorTier: input.inquiryType === "sponsor" ? input.sponsorTier : "",
     vendorCategory: input.inquiryType === "vendor" ? input.vendorCategory.trim() : "",
+    vendorOtherDescription:
+      input.inquiryType === "vendor" && input.vendorCategory === "Other"
+        ? input.vendorOtherDescription.trim()
+        : "",
     message: input.message.trim(),
     consent: input.consent
   };

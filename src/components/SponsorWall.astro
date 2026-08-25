@@ -1,0 +1,51 @@
+---
+import Icon from "./Icon.astro";
+import { sponsorsByTier } from "../data/sponsors";
+
+const groups = sponsorsByTier();
+---
+
+<section class="section sponsor-wall" aria-labelledby="supporters-title">
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Our supporters</p>
+        <h2 id="supporters-title">The businesses behind the festival.</h2>
+      </div>
+      <p>Every sponsor helps keep the festival free for Pearland families. Thank you to the businesses backing this year’s event.</p>
+    </div>
+
+    {groups.map(({ tier, members }) => (
+      <div class="sponsor-group">
+        <p class="sponsor-tier-label">{tier.name}</p>
+        <ul class="sponsor-grid" role="list">
+          {members.map((sponsor) => (
+            <li>
+              <article class="sponsor-card" data-tier={tier.id}>
+                <div class="sponsor-logo">
+                  {sponsor.logo
+                    ? <img src={sponsor.logo} alt={sponsor.name} loading="lazy" />
+                    : <span aria-hidden="true">{sponsor.monogram}</span>}
+                </div>
+                <h3>
+                  {sponsor.url
+                    ? <a href={sponsor.url} target="_blank" rel="noreferrer" data-track-event="sponsor_link_clicked" data-track-sponsor={sponsor.name}>{sponsor.name}</a>
+                    : sponsor.name}
+                </h3>
+              </article>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+
+    <a class="sponsor-invite" href="/partners/" data-track-event="partner_cta_clicked" data-track-placement="sponsor_wall">
+      <span class="sponsor-invite-mark" aria-hidden="true">+</span>
+      <span>
+        <strong>Your logo here</strong>
+        <small>Sponsorships start at $500 and include placement on this page.</small>
+      </span>
+      <Icon name="arrow" size={18} />
+    </a>
+  </div>
+</section>

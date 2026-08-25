@@ -1,11 +1,14 @@
 ---
 import Icon from "../components/Icon.astro";
+import SponsorWall from "../components/SponsorWall.astro";
 import VendorListing from "../components/VendorListing.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { vendorDirectoryEnabled } from "../config/features";
 import { activities, event } from "../data/event";
+import { eventPhotos } from "../data/eventPhotos";
 import { vendors } from "../data/vendors";
 
-const description = `${event.dateDisplay} at ${event.venue}. A free community event with trick-or-treating, a costume contest, sneakers, vintage, music, games, vendors, and food.`;
+const description = `${event.dateDisplay} at ${event.venue}. A free community event with trick-or-treating, a costume contest, music, games, vendors, activities, and food.`;
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "Festival",
@@ -48,12 +51,12 @@ const structuredData = {
     <section class="hero poster-hero" aria-labelledby="event-title">
       <div class="container hero-inner">
         <div class="hero-copy">
-          <p class="eyebrow">Free community event · Pearland, Texas</p>
+          <p class="eyebrow">Presented by Space City Collective · Free admission · Pearland, Texas</p>
           <h1 id="event-title">Halloween <span>Festival</span></h1>
-          <p class="hero-lede">A free Saturday in Pearland with costumes, candy, sneakers, vintage, music, games, food, and local vendors.</p>
+          <p class="hero-lede">A free Saturday in Pearland with costumes, candy, music, games, food, activities, local vendors, and community.</p>
           <div class="hero-actions">
-            <a class="button button-primary" href="#event">Plan your visit <Icon name="arrow" size={17} /></a>
-            <a class="button button-secondary" href="/partners/">Partner with us</a>
+            <a class="button button-primary" href="#event" data-track-event="visit_cta_clicked" data-track-placement="home_hero">Plan your visit <Icon name="arrow" size={17} /></a>
+            <a class="button button-secondary" href="/partners/" data-track-event="partner_cta_clicked" data-track-placement="home_hero">Partner with us</a>
           </div>
         </div>
         <div class="event-bill" aria-label={`${event.dateDisplay}, ${event.timeDisplay}, ${event.venue}`}>
@@ -75,8 +78,8 @@ const structuredData = {
             <span>When</span>
             <strong>{event.dateDisplay}</strong>
             <div class="fact-calendar-links">
-              <a href={event.calendarDownloadUrl} download>Add to calendar</a>
-              <a href={event.googleCalendarUrl} target="_blank" rel="noreferrer">Google Calendar</a>
+              <a href={event.calendarDownloadUrl} download data-track-event="calendar_added" data-track-method="ics">Add to calendar</a>
+              <a href={event.googleCalendarUrl} target="_blank" rel="noreferrer" data-track-event="calendar_added" data-track-method="google">Google Calendar</a>
             </div>
           </div>
         </div>
@@ -93,7 +96,7 @@ const structuredData = {
             <p class="eyebrow">What’s happening</p>
             <h2 id="happening-title">One afternoon.<br />A whole lot of fun.</h2>
           </div>
-          <p>Bring the whole crew for a family-friendly celebration of Halloween, streetwear, local flavor, and community.</p>
+          <p>Bring the whole crew for a family-friendly celebration of Halloween, local flavor, creative businesses, and community.</p>
         </div>
         <div class="program-list">
           {activities.map((activity, index) => (
@@ -108,7 +111,7 @@ const structuredData = {
       </div>
     </section>
 
-    <section class="section vendor-preview" aria-labelledby="vendor-preview-title">
+    {vendorDirectoryEnabled && <section class="section vendor-preview" aria-labelledby="vendor-preview-title">
       <div class="container">
         <div class="vendor-preview-heading">
           <div>
@@ -128,7 +131,35 @@ const structuredData = {
           <a href="/partners/?interest=vendor#inquiry">Interested in vending?</a>
         </div>
       </div>
-    </section>
+    </section>}
+
+    {eventPhotos.length > 0 && (
+      <section class="section event-gallery-section" aria-labelledby="event-gallery-title" data-event-gallery>
+        <div class="container">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">From the festival</p>
+              <h2 id="event-gallery-title">Pearland shows up.</h2>
+            </div>
+            <p>A look at the families, businesses, and community that make the festival possible.</p>
+          </div>
+          <div class="event-gallery">
+            {eventPhotos.map((photo) => (
+              <figure>
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  width={photo.width}
+                  height={photo.height}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
 
     <section class="two-paths" aria-label="Festival information by audience">
       <div class="path-grid">
@@ -139,7 +170,7 @@ const structuredData = {
           <ul class="chip-list" aria-label="Family event highlights">
             <li>Free admission</li><li>Trick-or-treat</li><li>Costume contest</li><li>All ages</li>
           </ul>
-          <a class="button button-light" href="#location">Get directions <Icon name="arrow" size={17} /></a>
+          <a class="button button-light" href="#location" data-track-event="directions_cta_clicked" data-track-placement="audience_panel">Get directions <Icon name="arrow" size={17} /></a>
         </article>
         <article class="path-panel">
           <p class="eyebrow">For local businesses</p>
@@ -148,7 +179,7 @@ const structuredData = {
           <ul class="chip-list" aria-label="Business opportunity highlights">
             <li>4,000+ past attendees</li><li>Sponsor packages</li><li>Vendor interest</li>
           </ul>
-          <a class="button button-secondary" href="/partners/">Business opportunities <Icon name="arrow" size={17} /></a>
+          <a class="button button-secondary" href="/partners/" data-track-event="partner_cta_clicked" data-track-placement="audience_panel">Business opportunities <Icon name="arrow" size={17} /></a>
         </article>
       </div>
     </section>
@@ -159,13 +190,22 @@ const structuredData = {
           <p class="eyebrow">Meet us in Pearland</p>
           <h2 class="display-heading" id="location-title">Right in the heart of town.</h2>
           <p>The festival takes over the Methodist Pavilion at Pearland Town Center. Trick-or-treating will take place at participating stores throughout the center.</p>
-          <a class="button button-primary" href={event.mapsUrl} target="_blank" rel="noreferrer">Open in maps <Icon name="arrow" size={17} /></a>
+          <a class="button button-primary" href={event.mapsUrl} target="_blank" rel="noreferrer" data-track-event="directions_opened" data-track-placement="location_section">Open in maps <Icon name="arrow" size={17} /></a>
         </div>
         <div class="address-card">
-          <div class="pin-drawing"><Icon name="pin" size={76} /></div>
-          <strong>{event.venue}</strong>
-          <span>{event.address}</span>
-          <a href={event.mapsUrl} target="_blank" rel="noreferrer">View directions <Icon name="arrow" size={16} /></a>
+          <iframe
+            class="venue-map"
+            src={event.mapEmbedUrl}
+            title={`Google map showing ${event.venue}`}
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="strict-origin-when-cross-origin"
+          ></iframe>
+          <div class="address-card-copy">
+            <strong>{event.venue}</strong>
+            <span>{event.address}</span>
+            <a href={event.mapsUrl} target="_blank" rel="noreferrer" data-track-event="directions_opened" data-track-placement="map_card">View directions <Icon name="arrow" size={16} /></a>
+          </div>
         </div>
       </div>
     </section>
@@ -176,11 +216,13 @@ const structuredData = {
           <span>Local businesses power this celebration</span>
           <h2 id="impact-title">Put your brand where the community gathers.</h2>
           <p>Sponsorships help create a safe, fun, and memorable experience for Pearland families.</p>
-          <a class="button button-impact" href="/partners/">Explore sponsorships <Icon name="arrow" size={17} /></a>
+          <a class="button button-impact" href="/partners/" data-track-event="partner_cta_clicked" data-track-placement="impact_band">Explore sponsorships <Icon name="arrow" size={17} /></a>
         </div>
         <div class="impact-stat">4,000+<span>Attended last year</span></div>
       </div>
     </section>
+
+    <SponsorWall />
 
     <section class="section" id="faq" aria-labelledby="faq-title">
       <div class="container narrow">
@@ -205,7 +247,17 @@ const structuredData = {
           </details>
           <details>
             <summary>Who can I contact with another question?</summary>
-            <p>Email <a href={`mailto:${event.contactEmail}`}>{event.contactEmail}</a> or follow {event.socialHandle}.</p>
+            <p>
+              Email <a href={`mailto:${event.contactEmail}`}>{event.contactEmail}</a> or follow{" "}
+              <a
+                href={event.instagramUrl}
+                target="_blank"
+                rel="noreferrer"
+                data-track-event="social_link_clicked"
+                data-track-platform="instagram"
+                data-track-placement="faq"
+              >{event.socialHandle}</a>.
+            </p>
           </details>
         </div>
       </div>

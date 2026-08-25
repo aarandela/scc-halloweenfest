@@ -18,12 +18,21 @@ describe("site structure", () => {
     expect(existsSync("src/lib/inquiry.ts")).toBe(true);
   });
 
+  it("provides reusable campaign attribution behavior", () => {
+    expect(existsSync("src/lib/analytics.ts")).toBe(true);
+  });
+
   it("provides a public vendor directory", () => {
     expect(existsSync("src/pages/vendors.astro")).toBe(true);
   });
 
   it("keeps vendor listings in reusable data", () => {
     expect(existsSync("src/data/vendors.ts")).toBe(true);
+  });
+
+  it("keeps production visibility and future event photos data-driven", () => {
+    expect(existsSync("src/config/features.ts")).toBe(true);
+    expect(existsSync("src/data/eventPhotos.ts")).toBe(true);
   });
 
   it("self-hosts the display and body fonts used by the design", () => {

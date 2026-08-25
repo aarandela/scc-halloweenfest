@@ -2,7 +2,7 @@ export const event = {
   organizer: "Space City Collective",
   name: "Space City Halloween Festival",
   description:
-    "A free community Halloween festival with trick-or-treating, costumes, sneakers, vintage, music, games, local vendors, and food.",
+    "A free community Halloween festival with trick-or-treating, costumes, music, games, local vendors, activities, and food.",
   dateISO: "2026-10-24",
   dateDisplay: "Saturday, October 24, 2026",
   timeDisplay: "2:00–8:00 PM",
@@ -11,12 +11,15 @@ export const event = {
   address: "11200 Broadway St, Pearland, TX 77584",
   mapsUrl:
     "https://www.google.com/maps/search/?api=1&query=11200%20Broadway%20St%2C%20Pearland%2C%20TX%2077584",
+  mapEmbedUrl:
+    "https://www.google.com/maps?q=Pearland%20Town%20Center%20Methodist%20Pavilion%2C%2011200%20Broadway%20St%2C%20Pearland%2C%20TX%2077584&output=embed",
   calendarDownloadUrl: "/space-city-halloween-festival-2026.ics",
   googleCalendarUrl:
     "https://calendar.google.com/calendar/render?action=TEMPLATE&text=Space%20City%20Halloween%20Festival&dates=20261024T190000Z%2F20261025T010000Z&details=Free%20community%20Halloween%20festival%20with%20trick-or-treating%2C%20costumes%2C%20vendors%2C%20music%2C%20games%2C%20and%20food.&location=Pearland%20Town%20Center%20%E2%80%94%20Methodist%20Pavilion%2C%2011200%20Broadway%20St%2C%20Pearland%2C%20TX%2077584",
   previousAttendance: 4000,
   contactEmail: "spacecitycollective713@gmail.com",
-  socialHandle: "@spacecitycollective"
+  socialHandle: "@space_citycollective",
+  instagramUrl: "https://www.instagram.com/space_citycollective/"
 } as const;
 
 export const activities = [
@@ -33,8 +36,8 @@ export const activities = [
     icon: "trophy"
   },
   {
-    title: "Sneakers & vintage",
-    description: "Shop streetwear, vintage finds, and goods from local vendors.",
+    title: "Local vendors & makers",
+    description: "Shop goods from local businesses, makers, and community vendors.",
     time: "2:00–8:00 PM",
     icon: "spark"
   },

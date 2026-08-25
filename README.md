@@ -1,6 +1,6 @@
 # Space City Halloween Festival
 
-A three-page event website built with Astro for the October 24, 2026 Space City Halloween Festival in Pearland, Texas.
+An Astro event website for the October 24, 2026 Space City Halloween Festival in Pearland, Texas.
 
 ## Local development
 
@@ -24,22 +24,57 @@ The end-to-end command builds the site, starts a local static server, and checks
 ## Routes
 
 - `/` — public event guide
-- `/vendors/` — filterable public vendor directory
+- `/vendors/` — filterable public vendor directory, redirected to `/` until the confirmed lineup is ready
 - `/partners/` — sponsorship packages, vendor information, and inquiry form
+- `/partners/thanks/` — no-index success page used to count completed inquiries
 
-Placeholder vendor listings live in `src/data/vendors.ts`. Replace each sample object with confirmed vendor details as the roster arrives; the homepage preview and full directory read from the same data source.
+Vendor listings live in `src/data/vendors.ts`. Replace the sample objects with confirmed vendor details, then set `SHOW_VENDOR_DIRECTORY=true` to publish both the homepage preview and full directory. With the flag absent or false, no placeholder vendors or vendor-directory links are included in production.
+
+Approved event photography can be added to `src/data/eventPhotos.ts`. The gallery is omitted entirely while that array is empty, so there are no public photo placeholders.
 
 The site self-hosts Latin WOFF2 builds of Barlow Condensed Italic and Inter in `public/fonts/` under the included SIL Open Font License files. The public event page also ships an `.ics` calendar download and a Google Calendar link.
 
 ## Form integration
 
-The sponsor/vendor form is fully designed, conditionally validated, spam-honeypot protected, and prepared to send JSON. It intentionally does not claim to deliver submissions until a backend is configured.
+The sponsor/vendor form validates conditionally and submits directly to Web3Forms with a hidden bot-check field. Configure these environment variables in Cloudflare Pages under **Settings → Environment variables**:
 
-Set `PUBLIC_INQUIRY_ENDPOINT` to the future Cloudflare endpoint URL. The browser will send a `POST` request with `Content-Type: application/json`. The payload is defined by `prepareInquiry()` in `src/lib/inquiry.ts` and currently uses `schemaVersion: 1`.
+- `PUBLIC_WEB3FORMS_ACCESS_KEY` — required for form delivery
+- `PUBLIC_TURNSTILE_SITE_KEY` — optional Cloudflare Turnstile protection; when supplied, verification is required before submission
 
-If the variable is absent, the form validates locally and directs the user to `spacecitycollective713@gmail.com` instead of showing a false success state.
+Use the same variables locally in `.env.local`; that file is ignored by Git. `.env.example` documents the expected configuration without storing live values.
+
+If the Web3Forms key is absent, the form does not show a false success state and directs the visitor to the festival email address instead.
+
+Successful submissions redirect to `/partners/thanks/`. Leave the Web3Forms dashboard **Redirect URL** blank because the site handles this after the API confirms delivery.
+
+## Analytics and campaign attribution
+
+Campaign URLs and naming conventions are in [`docs/tracking-links.md`](docs/tracking-links.md). Tagged visits are stored for the current browser session and included as non-personal hidden fields in Web3Forms submissions.
+
+In Cloudflare:
+
+1. Open the Pages project, choose **Metrics**, and enable **Web Analytics**. Cloudflare injects its page-view beacon on the next deployment.
+2. Enable **Zaraz** for the site if custom event reporting is wanted. Connect an analytics destination such as GA4, then map the site's `zaraz.track` events to that destination.
+3. Deploy again and test one tagged URL, one calendar or directions click, and one inquiry. Confirm the visit and `/partners/thanks/` page view in Web Analytics, the custom event in the Zaraz destination, and the `campaign_*` values in Web3Forms.
+
+The site emits these anonymous custom events:
+
+- `visit_cta_clicked`
+- `calendar_added`
+- `directions_cta_clicked`
+- `directions_opened`
+- `partner_cta_clicked`
+- `packages_viewed`
+- `inquiry_cta_clicked`
+- `sponsor_link_clicked`
+- `inquiry_submitted`
+- `thank_you_cta_clicked`
+
+No contact details or free-form inquiry text are sent to analytics.
 
 ## Production metadata
 
-Set `SITE` to the final public origin, such as `https://festival.example.com`, so Astro can emit canonical and absolute social-image URLs. The 1200 × 630 sharing image lives at `public/og-image.png`. Deployment and Cloudflare project configuration are intentionally left to the site owner.
+Set `SITE` to the final public origin, such as `https://festival.example.com`, so Astro can emit canonical and absolute social-image URLs. The 1200 × 630 sharing image lives at `public/og-image.png`.
+
+For Cloudflare Pages, use `npm run build` as the build command and `dist` as the output directory.
 # scc-halloweenfest

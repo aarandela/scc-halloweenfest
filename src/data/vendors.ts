@@ -1,5 +1,5 @@
-export const vendorCategories = [
-  "All",
+/** Shopper-facing categories used by the public vendor directory. */
+export const vendorListingCategories = [
   "Sneakers & streetwear",
   "Vintage",
   "Food & drink",
@@ -7,7 +7,32 @@ export const vendorCategories = [
   "Community"
 ] as const;
 
-export type VendorCategory = Exclude<(typeof vendorCategories)[number], "All">;
+/** Listing categories prefixed with the directory's "All" filter option. */
+export const vendorCategories = ["All", ...vendorListingCategories] as const;
+
+export type VendorCategory = (typeof vendorListingCategories)[number];
+
+export function isVendorCategory(value: string): value is VendorCategory {
+  return (vendorListingCategories as readonly string[]).includes(value);
+}
+
+/** Broad application categories that work before a vendor is assigned a
+ * shopper-facing directory category. */
+export const vendorInquiryCategories = [
+  "Retail & merchandise",
+  "Food & beverage",
+  "Art & handmade goods",
+  "Services & local business",
+  "Nonprofit & community",
+  "Entertainment & activities",
+  "Other"
+] as const;
+
+export type VendorInquiryCategory = (typeof vendorInquiryCategories)[number];
+
+export function isVendorInquiryCategory(value: string): value is VendorInquiryCategory {
+  return (vendorInquiryCategories as readonly string[]).includes(value);
+}
 
 export interface VendorListing {
   id: string;

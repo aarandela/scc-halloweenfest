@@ -8,9 +8,10 @@ interface Props {
   description: string;
   canonicalPath?: string;
   structuredData?: Record<string, unknown>;
+  noindex?: boolean;
 }
 
-const { title, description, canonicalPath = "/", structuredData } = Astro.props;
+const { title, description, canonicalPath = "/", structuredData, noindex = false } = Astro.props;
 const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site) : undefined;
 const socialImageUrl = Astro.site ? new URL("/og-image.png", Astro.site).toString() : "/og-image.png";
 ---
@@ -22,6 +23,7 @@ const socialImageUrl = Astro.site ? new URL("/og-image.png", Astro.site).toStrin
     <meta name="viewport" content="width=device-width" />
     <meta name="theme-color" content="#100e14" />
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -46,5 +48,8 @@ const socialImageUrl = Astro.site ? new URL("/og-image.png", Astro.site).toStrin
     <SiteHeader currentPath={Astro.url.pathname} />
     <slot />
     <SiteFooter />
+    <script>
+      import "../scripts/analytics";
+    </script>
   </body>
 </html>

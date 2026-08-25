@@ -1,7 +1,11 @@
 ---
 import { event, sponsorTiers } from "../data/event";
+import { vendorInquiryCategories } from "../data/vendors";
 
-const endpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT ?? "";
+const web3formsAccessKey = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY ?? "";
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY ?? "";
+const formConfigured = Boolean(web3formsAccessKey);
+const turnstileConfigured = Boolean(turnstileSiteKey);
 ---
 
 <div class="form-shell">
@@ -13,13 +17,23 @@ const endpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT ?? "";
 
   <form
     class="inquiry-form"
-    action="/api/inquiries"
+    action="https://api.web3forms.com/submit"
     method="post"
     data-inquiry-form
-    data-endpoint={endpoint}
+    data-configured={String(formConfigured)}
+    data-requires-turnstile={String(turnstileConfigured)}
     data-contact-email={event.contactEmail}
     novalidate
   >
+    <input type="hidden" name="access_key" value={web3formsAccessKey} />
+    <input type="hidden" name="subject" value="New Space City Halloween Festival business inquiry" />
+    <input type="hidden" name="from_name" value="Space City Halloween Festival Website" />
+    <input type="hidden" name="campaign_source" value="" />
+    <input type="hidden" name="campaign_medium" value="" />
+    <input type="hidden" name="campaign_name" value="" />
+    <input type="hidden" name="campaign_content" value="" />
+    <input type="hidden" name="campaign_landing_page" value="" />
+
     <fieldset class="choice-fieldset">
       <legend>I’m interested in <span aria-hidden="true">*</span></legend>
       <div class="choice-grid">
@@ -76,9 +90,27 @@ const endpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT ?? "";
     <div data-vendor-fields hidden>
       <label class="field">
         <span>What does your business offer? <b aria-hidden="true">*</b></span>
-        <input name="vendorCategory" placeholder="For example: vintage apparel, desserts, art" aria-describedby="vendorCategory-error" />
+        <select name="vendorCategory" aria-describedby="vendorCategory-error">
+          <option value="">Choose a category</option>
+          {vendorInquiryCategories.map((category) => <option value={category}>{category}</option>)}
+        </select>
         <small class="field-error" id="vendorCategory-error" data-error-for="vendorCategory"></small>
       </label>
+      <div class="vendor-other-field" data-vendor-other-fields hidden>
+        <label class="field">
+          <span>Describe what your business offers <b aria-hidden="true">*</b></span>
+          <input
+            name="vendorOtherDescription"
+            aria-describedby="vendorOtherDescription-error"
+            placeholder="For example: pet adoption, photo booth, or kids activities"
+          />
+          <small
+            class="field-error"
+            id="vendorOtherDescription-error"
+            data-error-for="vendorOtherDescription"
+          ></small>
+        </label>
+      </div>
     </div>
 
     <label class="field">
@@ -88,6 +120,7 @@ const endpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT ?? "";
 
     <div class="honeypot" aria-hidden="true">
       <label>Company website <input name="company" tabindex="-1" autocomplete="off" /></label>
+      <label>Leave this field empty <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" /></label>
     </div>
 
     <label class="consent">
@@ -96,23 +129,36 @@ const endpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT ?? "";
     </label>
     <small class="field-error" data-error-for="consent"></small>
 
+    {turnstileConfigured && (
+      <div class="turnstile-shell">
+        <div class="cf-turnstile" data-sitekey={turnstileSiteKey} data-theme="dark"></div>
+      </div>
+    )}
+
     <div class="form-footer">
       <button class="button button-primary" type="submit">Send interest form</button>
       <p>Prefer email? <a href={`mailto:${event.contactEmail}`}>{event.contactEmail}</a></p>
     </div>
-    <p class="form-note">Online delivery is being connected. The form is ready for a future Cloudflare endpoint and will not claim to send until that endpoint is configured.</p>
+    {!formConfigured && (
+      <p class="form-note">Form delivery needs its Web3Forms access key. Until it is configured, please email the festival team directly.</p>
+    )}
     <p class="form-status" data-form-status role="status" aria-live="polite"></p>
   </form>
 </div>
 
+{turnstileConfigured && (
+  <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
+
 <script>
-  import { prepareInquiry, validateInquiry, type InquiryInput } from "../lib/inquiry";
+  import { validateInquiry, type InquiryInput } from "../lib/inquiry";
 
   const form = document.querySelector<HTMLFormElement>("[data-inquiry-form]");
 
   if (form) {
     const sponsorFields = form.querySelector<HTMLElement>("[data-sponsor-fields]");
     const vendorFields = form.querySelector<HTMLElement>("[data-vendor-fields]");
+    const vendorOtherFields = form.querySelector<HTMLElement>("[data-vendor-other-fields]");
     const status = form.querySelector<HTMLElement>("[data-form-status]");
     const submitButton = form.querySelector<HTMLButtonElement>('button[type="submit"]');
 
@@ -130,10 +176,16 @@ const endpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT ?? "";
 
     const updateConditionalFields = () => {
       const isSponsor = getInquiryType() === "sponsor";
+      const isOtherVendor = !isSponsor && getInput("vendorCategory")?.value === "Other";
       if (sponsorFields) sponsorFields.hidden = !isSponsor;
       if (vendorFields) vendorFields.hidden = isSponsor;
+      if (vendorOtherFields) vendorOtherFields.hidden = !isOtherVendor;
       getInput("sponsorTier")?.toggleAttribute("aria-required", isSponsor);
       getInput("vendorCategory")?.toggleAttribute("aria-required", !isSponsor);
+      getInput("vendorOtherDescription")?.toggleAttribute("aria-required", isOtherVendor);
+      if (!isOtherVendor && getInput("vendorOtherDescription")) {
+        getInput("vendorOtherDescription")!.value = "";
+      }
     };
 
     const readInput = (): InquiryInput => ({
@@ -145,6 +197,7 @@ const endpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT ?? "";
       website: getInput("website")?.value ?? "",
       sponsorTier: getInput("sponsorTier")?.value ?? "",
       vendorCategory: getInput("vendorCategory")?.value ?? "",
+      vendorOtherDescription: getInput("vendorOtherDescription")?.value ?? "",
       message: getInput("message")?.value ?? "",
       consent: (getInput("consent") as HTMLInputElement | null)?.checked ?? false,
       company: getInput("company")?.value ?? ""
@@ -174,7 +227,9 @@ const endpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT ?? "";
 
     form.addEventListener("change", (event) => {
       const target = event.target as HTMLInputElement;
-      if (target.name === "inquiryType") updateConditionalFields();
+      if (target.name === "inquiryType" || target.name === "vendorCategory") {
+        updateConditionalFields();
+      }
     });
 
     form.addEventListener("submit", async (event) => {
@@ -188,12 +243,20 @@ const endpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT ?? "";
         return;
       }
 
-      const endpoint = form.dataset.endpoint;
-      if (!endpoint) {
+      const accessKey = getInput("access_key")?.value.trim();
+      if (form.dataset.configured !== "true" || !accessKey) {
         if (status) {
-          status.textContent = `Your details look good. Online delivery is being connected; for now, email ${form.dataset.contactEmail ?? "the festival team"} to reach the festival team.`;
+          status.textContent = `This form is not available yet. Please email ${form.dataset.contactEmail ?? "the festival team"} instead.`;
         }
         return;
+      }
+
+      if (form.dataset.requiresTurnstile === "true") {
+        const turnstileResponse = getInput("cf-turnstile-response")?.value.trim();
+        if (!turnstileResponse) {
+          if (status) status.textContent = "Please complete the verification before sending your inquiry.";
+          return;
+        }
       }
 
       if (submitButton) {
@@ -202,17 +265,27 @@ const endpoint = import.meta.env.PUBLIC_INQUIRY_ENDPOINT ?? "";
       }
 
       try {
-        const response = await fetch(endpoint, {
+        const response = await fetch(form.action, {
           method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify(prepareInquiry(input))
+          headers: { Accept: "application/json" },
+          body: new FormData(form)
         });
-        if (!response.ok) throw new Error(`Inquiry endpoint returned ${response.status}`);
+        const result = await response.json().catch(() => null) as { success?: boolean } | null;
+        if (!response.ok || !result?.success) throw new Error(`Web3Forms returned ${response.status}`);
 
-        form.reset();
-        updateConditionalFields();
-        if (status) status.textContent = "Thank you. The festival team received your inquiry and will follow up soon.";
+        const conversionProperties: Record<string, string> = {
+          inquiry_type: input.inquiryType
+        };
+        if (input.inquiryType === "sponsor") conversionProperties.sponsor_tier = input.sponsorTier;
+        if (input.inquiryType === "vendor") conversionProperties.vendor_category = input.vendorCategory;
+
+        await Promise.race([
+          window.sccAnalytics?.track("inquiry_submitted", conversionProperties) ?? Promise.resolve(),
+          new Promise((resolve) => window.setTimeout(resolve, 500))
+        ]);
+        window.location.assign("/partners/thanks/");
       } catch {
+        (window as Window & { turnstile?: { reset: () => void } }).turnstile?.reset();
         if (status) status.textContent = "We couldn’t send your inquiry. Please try again or email the festival team directly.";
       } finally {
         if (submitButton) {

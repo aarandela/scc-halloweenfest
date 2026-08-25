@@ -2,8 +2,13 @@
 import Icon from "../components/Icon.astro";
 import VendorListing from "../components/VendorListing.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { vendorDirectoryEnabled } from "../config/features";
 import { event } from "../data/event";
 import { vendorCategories, vendors } from "../data/vendors";
+
+if (!vendorDirectoryEnabled) {
+  return Astro.redirect("/");
+}
 
 const description = `Explore the vendor lineup for the ${event.name} at Pearland Town Center.`;
 ---

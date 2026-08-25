@@ -1,4 +1,6 @@
 ---
+import { vendorDirectoryEnabled } from "../config/features";
+
 interface Props {
   currentPath: string;
 }
@@ -23,7 +25,7 @@ const onVendors = currentPath.startsWith("/vendors");
 
     <nav class="desktop-nav" aria-label="Primary navigation">
       <a href="/#event" aria-current={!onPartners && !onVendors ? "page" : undefined}>Event guide</a>
-      <a href="/vendors/" aria-current={onVendors ? "page" : undefined}>Vendors</a>
+      {vendorDirectoryEnabled && <a href="/vendors/" aria-current={onVendors ? "page" : undefined}>Vendors</a>}
       <a href="/partners/" aria-current={onPartners ? "page" : undefined}>For businesses</a>
       <a href="/#faq">FAQ</a>
     </nav>
@@ -35,13 +37,18 @@ const onVendors = currentPath.startsWith("/vendors");
       </summary>
       <nav aria-label="Mobile navigation">
         <a href="/#event" aria-current={!onPartners && !onVendors ? "page" : undefined}>Event guide</a>
-        <a href="/vendors/" aria-current={onVendors ? "page" : undefined}>Vendors</a>
+        {vendorDirectoryEnabled && <a href="/vendors/" aria-current={onVendors ? "page" : undefined}>Vendors</a>}
         <a href="/partners/" aria-current={onPartners ? "page" : undefined}>For businesses</a>
         <a href="/#faq">FAQ</a>
       </nav>
     </details>
 
-    <a class="button button-small header-cta" href={onPartners ? "#inquiry" : "/partners/"}>
+    <a
+      class="button button-small header-cta"
+      href={onPartners ? "#inquiry" : "/partners/"}
+      data-track-event={onPartners ? "inquiry_cta_clicked" : "partner_cta_clicked"}
+      data-track-placement="site_header"
+    >
       {onPartners ? "Send an inquiry" : "Partner with us"}
     </a>
   </div>

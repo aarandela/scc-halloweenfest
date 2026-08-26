@@ -1,8 +1,10 @@
 ---
+import { Image } from "astro:assets";
 import Icon from "../components/Icon.astro";
 import InquiryForm from "../components/InquiryForm.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { event, sponsorBenefits, sponsorTiers } from "../data/event";
+import { vendorPhotos } from "../data/eventPhotos";
 
 const description = `Sponsor or vend at the ${event.name}. Compare sponsorship opportunities and send an interest form to the Space City Collective team.`;
 
@@ -108,8 +110,21 @@ function priceLabel(price: number) {
           <p>Retail, food, art, handmade goods, services, nonprofits, and other community businesses can apply. Vendor pricing and requirements have not been published yet; the event coordinator will follow up with availability and next steps.</p>
           <a class="button button-primary" href="/partners/?interest=vendor#inquiry" data-track-event="inquiry_cta_clicked" data-track-placement="vendor_section" data-track-inquiry-type="vendor">Ask about vending <Icon name="arrow" size={17} /></a>
         </div>
-        <div class="vendor-type" aria-hidden="true">
-          <span>Vend</span><span>Shop</span><span>Eat</span><span>Meet</span>
+        <div class="vendor-photo-story" data-vendor-photo-story>
+          {vendorPhotos.map((photo) => (
+            <div class="vendor-photo">
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                layout="full-width"
+                widths={[360, 540, 720, 900]}
+                sizes="(max-width: 720px) 100vw, 28vw"
+                format="webp"
+                quality={78}
+                loading="lazy"
+              />
+            </div>
+          ))}
         </div>
       </div>
     </section>

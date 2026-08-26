@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import Icon from "./Icon.astro";
 import { sponsorsByTier } from "../data/sponsors";
 
@@ -22,16 +23,25 @@ const groups = sponsorsByTier();
           {members.map((sponsor) => (
             <li>
               <article class="sponsor-card" data-tier={tier.id}>
-                <div class="sponsor-logo">
-                  {sponsor.logo
-                    ? <img src={sponsor.logo} alt={sponsor.name} loading="lazy" />
-                    : <span aria-hidden="true">{sponsor.monogram}</span>}
-                </div>
-                <h3>
-                  {sponsor.url
-                    ? <a href={sponsor.url} target="_blank" rel="noreferrer" data-track-event="sponsor_link_clicked" data-track-sponsor={sponsor.name}>{sponsor.name}</a>
-                    : sponsor.name}
-                </h3>
+                {sponsor.url ? (
+                  <a class="sponsor-card-content" href={sponsor.url} target="_blank" rel="noreferrer" data-track-event="sponsor_link_clicked" data-track-sponsor={sponsor.name}>
+                    <div class:list={["sponsor-logo", { "has-logo": Boolean(sponsor.logo) }]}>
+                      {sponsor.logo
+                        ? <Image src={sponsor.logo} alt={sponsor.name} widths={[240, 480]} sizes="10rem" format="webp" quality={82} loading="lazy" />
+                        : <span aria-hidden="true">{sponsor.monogram}</span>}
+                    </div>
+                    <h3>{sponsor.name}</h3>
+                  </a>
+                ) : (
+                  <div class="sponsor-card-content">
+                    <div class:list={["sponsor-logo", { "has-logo": Boolean(sponsor.logo) }]}>
+                      {sponsor.logo
+                        ? <Image src={sponsor.logo} alt={sponsor.name} widths={[240, 480]} sizes="10rem" format="webp" quality={82} loading="lazy" />
+                        : <span aria-hidden="true">{sponsor.monogram}</span>}
+                    </div>
+                    <h3>{sponsor.name}</h3>
+                  </div>
+                )}
               </article>
             </li>
           ))}

@@ -1,5 +1,31 @@
 import { expect, test } from "@playwright/test";
 
+const parseRgb = (color: string) => {
+  const channels = color.match(/[\d.]+/g)?.slice(0, 3).map(Number);
+  if (!channels || channels.length !== 3) throw new Error(`Unsupported color: ${color}`);
+  return channels;
+};
+
+const relativeLuminance = (color: string) => {
+  const [red = 0, green = 0, blue = 0] = parseRgb(color).map((channel) => {
+    const normalized = channel / 255;
+    return normalized <= 0.04045
+      ? normalized / 12.92
+      : ((normalized + 0.055) / 1.055) ** 2.4;
+  });
+
+  return 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+};
+
+const contrastRatio = (foreground: string, background: string) => {
+  const foregroundLuminance = relativeLuminance(foreground);
+  const backgroundLuminance = relativeLuminance(background);
+  return (
+    (Math.max(foregroundLuminance, backgroundLuminance) + 0.05) /
+    (Math.min(foregroundLuminance, backgroundLuminance) + 0.05)
+  );
+};
+
 test("the vendor call to action opens a vendor-ready form", async ({ page }) => {
   await page.goto("/partners/");
   await page.getByRole("link", { name: /ask about vending/i }).click();
@@ -110,6 +136,127 @@ test("the pages do not overflow the viewport", async ({ page }) => {
       expect(overflows, `${path} overflows at ${width}px`).toBe(false);
     }
   }
+});
+
+test("small venue and footer text meets WCAG AA contrast", async ({ page }) => {
+  await page.goto("/");
+
+  for (const selector of [
+    ".venue-section .eyebrow",
+    ".footer-note",
+    ".footer-links a",
+    ".footer-links span",
+    ".footer-bottom > span:first-child",
+    ".footer-bottom > span:nth-child(2)"
+  ]) {
+    const colors = await page.locator(selector).first().evaluate((element) => {
+      let ancestor: Element | null = element;
+      let background = "rgba(0, 0, 0, 0)";
+
+      while (ancestor) {
+        const candidate = getComputedStyle(ancestor).backgroundColor;
+        if (candidate !== "rgba(0, 0, 0, 0)") {
+          background = candidate;
+          break;
+        }
+        ancestor = ancestor.parentElement;
+      }
+
+      return {
+        foreground: getComputedStyle(element).color,
+        background
+      };
+    });
+
+    expect(
+      contrastRatio(colors.foreground, colors.background),
+      `${selector} does not meet the 4.5:1 contrast requirement`
+    ).toBeGreaterThanOrEqual(4.5);
+  }
+});
+
+test("event photography remains contained at common phone widths", async ({ page }) => {
+  for (const width of [320, 375, 430]) {
+    await page.setViewportSize({ width, height: 844 });
+
+    for (const [path, selector] of [
+      ["/", "[data-community-photo-band]"],
+      ["/partners/", "[data-vendor-photo-story]"]
+    ] as const) {
+      await page.goto(path);
+      const composition = page.locator(selector);
+      await expect(composition).toBeVisible();
+
+      const layout = await composition.evaluate((element) => ({
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth,
+        images: Array.from(element.querySelectorAll("img"), (image) => {
+          const bounds = image.getBoundingClientRect();
+          return { left: bounds.left, right: bounds.right, height: bounds.height };
+        })
+      }));
+
+      expect(layout.documentWidth, `${path} overflows at ${width}px`).toBeLessThanOrEqual(layout.viewportWidth);
+      for (const image of layout.images) {
+        expect(image.left, `${path} image crosses the left edge at ${width}px`).toBeGreaterThanOrEqual(0);
+        expect(image.right, `${path} image crosses the right edge at ${width}px`).toBeLessThanOrEqual(width);
+        if (path === "/partners/") {
+          expect(image.height, `${path} image is not deliberately cropped at ${width}px`).toBeLessThanOrEqual(320);
+        }
+      }
+    }
+  }
+});
+
+test("the community photo story keeps its headline inside a balanced desktop column", async ({ page }) => {
+  for (const width of [1024, 1440, 1600, 2048]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+
+    const layout = await page.locator("[data-community-photo-band]").evaluate((section) => {
+      const heading = section.querySelector("h2");
+      const photos = section.querySelector(".community-photo-composition");
+      if (!(heading instanceof HTMLElement) || !(photos instanceof HTMLElement)) {
+        throw new Error("Community photo story is incomplete");
+      }
+
+      const headingBox = heading.getBoundingClientRect();
+      const photoBox = photos.getBoundingClientRect();
+      return {
+        headingClientWidth: heading.clientWidth,
+        headingScrollWidth: heading.scrollWidth,
+        visualGap: photoBox.left - (headingBox.left + heading.scrollWidth)
+      };
+    });
+
+    expect(layout.headingScrollWidth, `headline overflows its column at ${width}px`).toBeLessThanOrEqual(layout.headingClientWidth + 1);
+    expect(layout.visualGap, `headline crowds the photography at ${width}px`).toBeGreaterThanOrEqual(48);
+  }
+});
+
+test("audience highlight lists use a drawn pumpkin marker", async ({ page }) => {
+  await page.goto("/");
+
+  const marker = await page.locator(".chip-list li").first().evaluate((item) => {
+    const body = getComputedStyle(item, "::before");
+    const stem = getComputedStyle(item, "::after");
+    return {
+      bodyContent: body.content,
+      bodyWidth: Number.parseFloat(body.width),
+      bodyHeight: Number.parseFloat(body.height),
+      bodyColor: body.backgroundColor,
+      stemContent: stem.content,
+      stemColor: stem.backgroundColor
+    };
+  });
+
+  expect(marker.bodyContent).toBe('\"\"');
+  expect(marker.bodyWidth).toBeGreaterThanOrEqual(10);
+  expect(marker.bodyHeight).toBeGreaterThanOrEqual(8);
+  expect(marker.bodyColor).not.toBe("rgba(0, 0, 0, 0)");
+  expect(marker.stemContent).toBe('\"\"');
+  expect(marker.stemColor).not.toBe("rgba(0, 0, 0, 0)");
 });
 
 test("the homepage hero has no accidental center seam", async ({ page }) => {

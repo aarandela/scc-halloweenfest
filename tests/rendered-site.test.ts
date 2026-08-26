@@ -94,9 +94,18 @@ describe("public event page", () => {
     expect(home).not.toContain('class="pin-drawing"');
   });
 
-  it("does not render photo placeholders while awaiting event photography", () => {
+  it("does not render the former placeholder gallery", () => {
     expect(home).not.toContain('data-event-gallery');
     expect(home).not.toContain("Sample event photo");
+  });
+
+  it("welcomes new visitors with community photography from last year's festival", () => {
+    expect(home).toContain("data-community-photo-band");
+    expect(home).toContain("Pearland comes together.");
+    expect(home).toContain("4,000+ attended");
+    expect(home).toContain("Families gathering around the Methodist Pavilion");
+    expect(home).toContain("Festival visitors meeting community vendors");
+    expect(home).toContain("Visitors trick-or-treating at a participating Pearland Town Center store");
   });
 });
 
@@ -148,6 +157,13 @@ describe("partner page", () => {
     expect(partners).toContain('class="sponsor-ledger"');
     expect(partners).not.toContain("vendor-visual");
   });
+
+  it("shows prospective vendors real marketplace photography", () => {
+    expect(partners).toContain("data-vendor-photo-story");
+    expect(partners).toContain("Apparel and accessories displayed at a festival vendor booth");
+    expect(partners).toContain("Sneakers displayed across a festival vendor table");
+    expect(partners).not.toContain('class="vendor-type"');
+  });
 });
 
 describe("inquiry conversion page", () => {
@@ -198,6 +214,10 @@ describe("shared site credit", () => {
       expect(page).toContain("Built by <strong>Arandela &amp; Co.</strong>");
       expect(page).toContain('href="https://arandela.co"');
     }
+    expect(home).toContain('class="sponsor-logo has-logo"');
+    expect(home).toMatch(/src="\/_astro\/arandela-co\.[^"]+\.webp"/);
+    expect(home).toContain('alt="Arandela &amp; Co."');
+    expect(home).toContain('class="sponsor-card-content"');
   });
 
   it("links the official Instagram profile from shared contact areas", () => {

@@ -1,4 +1,6 @@
-import { sponsorTiers } from './event'
+import type { ImageMetadata } from "astro";
+import arandelaCoLogo from "../assets/sponsors/arandela-co.png";
+import { sponsorTiers } from "./event";
 
 export type SponsorTierId = (typeof sponsorTiers)[number]['id']
 
@@ -6,10 +8,10 @@ export interface Sponsor {
   id: string
   name: string
   tierId: SponsorTierId
-  /** Path to a logo in /public. Falls back to the monogram when absent. */
-  logo?: string
-  url?: string
-  monogram: string
+  /** Local artwork optimized by Astro. Falls back to the monogram when absent. */
+  logo?: ImageMetadata;
+  url?: string;
+  monogram: string;
 }
 
 /**
@@ -18,16 +20,17 @@ export interface Sponsor {
  */
 export const sponsors: readonly Sponsor[] = [
   {
-    id: 'arandela-co',
-    name: 'Arandela & Co.',
-    tierId: 'community-supporter',
-    url: 'https://arandela.co',
-    monogram: 'A&C',
-  },
-]
+    id: "arandela-co",
+    name: "Arandela & Co.",
+    tierId: "community-supporter",
+    logo: arandelaCoLogo,
+    url: "https://arandela.co",
+    monogram: "A&C"
+  }
+];
 
 export function tierNameFor(tierId: SponsorTierId) {
-  return sponsorTiers.find((tier) => tier.id === tierId)?.name ?? ''
+  return sponsorTiers.find((tier) => tier.id === tierId)?.name ?? "";
 }
 
 export function sponsorsByTier() {
@@ -37,5 +40,5 @@ export function sponsorsByTier() {
       members: sponsors.filter((sponsor) => sponsor.tierId === tier.id),
     }))
     .filter((group) => group.members.length > 0)
-    .reverse()
+    .reverse();
 }

@@ -1,11 +1,12 @@
 ---
+import { Image } from "astro:assets";
 import Icon from "../components/Icon.astro";
 import SponsorWall from "../components/SponsorWall.astro";
 import VendorListing from "../components/VendorListing.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { vendorDirectoryEnabled } from "../config/features";
 import { activities, event } from "../data/event";
-import { eventPhotos } from "../data/eventPhotos";
+import { communityPhotos } from "../data/eventPhotos";
 import { vendors } from "../data/vendors";
 
 const description = `${event.dateDisplay} at ${event.venue}. A free community event with trick-or-treating, a costume contest, music, games, vendors, activities, and food.`;
@@ -89,6 +90,33 @@ const structuredData = {
       </div>
     </div>
 
+    <section class="community-photo-band" aria-labelledby="community-photo-title" data-community-photo-band>
+      <div class="container community-photo-layout">
+        <div class="community-photo-copy">
+          <p class="eyebrow">From last year’s festival</p>
+          <h2 id="community-photo-title">Pearland comes together.</h2>
+          <p>Families, neighbors, and local businesses filled the Town Center for an afternoon of costumes, candy, and community.</p>
+          <strong>4,000+ attended</strong>
+        </div>
+        <div class="community-photo-composition">
+          {communityPhotos.map((photo, index) => (
+            <div class:list={["community-photo", { "community-photo-primary": index === 0 }]}>
+              <Image
+                src={photo.src}
+                alt={photo.alt}
+                layout="full-width"
+                widths={index === 0 ? [640, 960, 1280, 1600] : [320, 480, 640, 800]}
+                sizes={index === 0 ? "(max-width: 720px) 100vw, 64vw" : "(max-width: 720px) 50vw, 20vw"}
+                format="webp"
+                quality={78}
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
     <section class="section" aria-labelledby="happening-title">
       <div class="container">
         <div class="section-heading program-heading">
@@ -132,34 +160,6 @@ const structuredData = {
         </div>
       </div>
     </section>}
-
-    {eventPhotos.length > 0 && (
-      <section class="section event-gallery-section" aria-labelledby="event-gallery-title" data-event-gallery>
-        <div class="container">
-          <div class="section-heading">
-            <div>
-              <p class="eyebrow">From the festival</p>
-              <h2 id="event-gallery-title">Pearland shows up.</h2>
-            </div>
-            <p>A look at the families, businesses, and community that make the festival possible.</p>
-          </div>
-          <div class="event-gallery">
-            {eventPhotos.map((photo) => (
-              <figure>
-                <img
-                  src={photo.src}
-                  alt={photo.alt}
-                  width={photo.width}
-                  height={photo.height}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </figure>
-            ))}
-          </div>
-        </div>
-      </section>
-    )}
 
     <section class="two-paths" aria-label="Festival information by audience">
       <div class="path-grid">

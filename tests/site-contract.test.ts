@@ -35,6 +35,25 @@ describe("site structure", () => {
     expect(existsSync("src/data/eventPhotos.ts")).toBe(true);
   });
 
+  it("ships only approved event photography in audience-specific groups", () => {
+    for (const name of ["schf1.jpeg", "schf2.jpeg", "schf3.jpeg", "schf5.jpeg", "schf6.jpeg"]) {
+      expect(existsSync(`src/assets/event-photos/${name}`)).toBe(true);
+    }
+    expect(existsSync("src/assets/event-photos/schf4.jpeg")).toBe(false);
+
+    const photoData = readFileSync("src/data/eventPhotos.ts", "utf8");
+    expect(photoData).toContain("export const communityPhotos");
+    expect(photoData).toContain("export const vendorPhotos");
+  });
+
+  it("ships the confirmed Arandela & Co. sponsor artwork", () => {
+    expect(existsSync("src/assets/sponsors/arandela-co.png")).toBe(true);
+
+    const sponsorData = readFileSync("src/data/sponsors.ts", "utf8");
+    expect(sponsorData).toContain('import arandelaCoLogo from "../assets/sponsors/arandela-co.png"');
+    expect(sponsorData).toContain("logo: arandelaCoLogo");
+  });
+
   it("self-hosts the display and body fonts used by the design", () => {
     const css = readFileSync("src/styles/global.css", "utf8");
 
@@ -73,6 +92,24 @@ describe("site structure", () => {
     expect(existsSync("public/robots.txt")).toBe(true);
     expect(existsSync("public/sitemap.xml")).toBe(true);
     expect(existsSync("src/pages/404.astro")).toBe(true);
+  });
+
+  it("publishes a standards-compliant security contact", () => {
+    const securityPath = "public/.well-known/security.txt";
+
+    expect(existsSync(securityPath)).toBe(true);
+    if (!existsSync(securityPath)) return;
+
+    const security = readFileSync(securityPath, "utf8");
+    expect(security).toContain("Contact: mailto:audy@arandela.co");
+    expect(security).toContain(
+      "Canonical: https://spacecityhalloweenfest.com/.well-known/security.txt"
+    );
+    expect(security).toMatch(/^Expires: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/m);
+
+    const headers = readFileSync("public/_headers", "utf8");
+    expect(headers).toContain("/.well-known/security.txt");
+    expect(headers).toContain("Content-Type: text/plain; charset=utf-8");
   });
 
   it("ships branded short links for campaign sharing", () => {

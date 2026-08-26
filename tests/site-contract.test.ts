@@ -57,11 +57,32 @@ describe("site structure", () => {
     expect(calendar).toContain("DTSTART:20261024T190000Z");
     expect(calendar).toContain("DTEND:20261025T010000Z");
     expect(calendar).not.toContain("TZID=");
+
+    // RFC 5545 §3.1: CRLF line endings, and content lines folded at 75 octets.
+    // Outlook is the strictest consumer of both.
+    const lines = calendar.split("\r\n");
+    expect(lines.length).toBeGreaterThan(1);
+    expect(calendar).not.toMatch(/(?<!\r)\n/);
+    for (const line of lines) {
+      expect(Buffer.byteLength(line, "utf8")).toBeLessThanOrEqual(75);
+    }
+    expect(calendar).toContain("@spacecityhalloweenfest.com");
   });
 
   it("ships crawler directives, a sitemap, and a real not-found page", () => {
     expect(existsSync("public/robots.txt")).toBe(true);
     expect(existsSync("public/sitemap.xml")).toBe(true);
     expect(existsSync("src/pages/404.astro")).toBe(true);
+  });
+
+  it("ships branded short links for campaign sharing", () => {
+    const redirects = existsSync("public/_redirects")
+      ? readFileSync("public/_redirects", "utf8")
+      : "";
+
+    for (const path of ["/ig", "/fb", "/tiktok", "/youtube", "/sponsor", "/vendor"]) {
+      expect(redirects).toContain(`${path} https://spacecityhalloweenfest.com/`);
+    }
+    expect(redirects.match(/ 302$/gm)).toHaveLength(12);
   });
 });

@@ -4,14 +4,18 @@ PRODID:-//Space City Collective//Halloween Festival 2026//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:space-city-halloween-festival-2026@spacecitycollective.com
+UID:space-city-halloween-festival-2026@spacecityhalloweenfest.com
 DTSTAMP:20260822T050000Z
 DTSTART:20261024T190000Z
 DTEND:20261025T010000Z
 SUMMARY:Space City Halloween Festival
-DESCRIPTION:Free community Halloween festival with trick-or-treating\, costumes\, vendors\, music\, games\, and food.
-LOCATION:Pearland Town Center - Methodist Pavilion\, 11200 Broadway St\, Pearland\, TX 77584
+DESCRIPTION:Free community Halloween festival with trick-or-treating\, cost
+ umes\, vendors\, music\, games\, and food.
+LOCATION:Pearland Town Center - Methodist Pavilion\, 11200 Broadway St\, Pe
+ arland\, TX 77584
+URL:https://spacecityhalloweenfest.com/
 STATUS:CONFIRMED
+SEQUENCE:0
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR

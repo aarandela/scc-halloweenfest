@@ -4,6 +4,19 @@ Use a tagged URL whenever the festival website is shared. The site remembers the
 
 ## Ready-to-use links
 
+Use these branded links for everyday sharing. They redirect to the tagged campaign URLs below, so the visible link stays short while attribution continues to work.
+
+| Placement | Short link |
+| --- | --- |
+| Instagram bio or story | `https://spacecityhalloweenfest.com/ig` |
+| Facebook page or event | `https://spacecityhalloweenfest.com/fb` |
+| TikTok profile | `https://spacecityhalloweenfest.com/tiktok` |
+| YouTube description | `https://spacecityhalloweenfest.com/youtube` |
+| Sponsor outreach | `https://spacecityhalloweenfest.com/sponsor` |
+| Vendor outreach | `https://spacecityhalloweenfest.com/vendor` |
+
+The full URLs remain useful when a separate `utm_content` value is needed for an individual post.
+
 | Placement | URL |
 | --- | --- |
 | Instagram bio | `https://spacecityhalloweenfest.com/?utm_source=instagram&utm_medium=social&utm_campaign=halloween-2026&utm_content=bio` |
@@ -37,4 +50,3 @@ Use lowercase words separated by hyphens. Do not rename a source or campaign aft
 - Campaign source, medium, campaign, post/content, and landing page in each Web3Forms inquiry.
 
 Names, email addresses, phone numbers, business messages, and other form answers are not sent to analytics.
-

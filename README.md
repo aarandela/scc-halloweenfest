@@ -74,7 +74,7 @@ No contact details or free-form inquiry text are sent to analytics.
 
 ## Production metadata
 
-Set `SITE=https://spacecityhalloweenfest.com` in both the Production and Preview environments. The build also uses that origin as a safe default, so canonical links and social-image URLs remain absolute if the variable is accidentally omitted. The 1200 × 630 sharing image lives at `public/og-image.png`.
+Set `SITE=https://spacecityhalloweenfest.com` in both the Production and Preview environments. The build also uses that origin as a safe default, so canonical links and social-image URLs remain absolute if the variable is accidentally omitted. The optimized 1200 × 630 sharing image lives at `public/og-image.jpg`.
 
 Use account-level Cloudflare Bulk Redirects to keep one public host:
 

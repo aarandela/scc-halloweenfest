@@ -213,8 +213,8 @@ describe("social sharing metadata", () => {
   it("uses canonical URLs and absolute large-image previews on every indexable page", () => {
     for (const page of [home, partners]) {
       expect(page).toMatch(/<link rel="canonical" href="https:\/\/spacecityhalloweenfest\.com(?:\/|\/partners\/)"/);
-      expect(page).toContain('property="og:image" content="https://spacecityhalloweenfest.com/og-image.png"');
-      expect(page).toContain('name="twitter:image" content="https://spacecityhalloweenfest.com/og-image.png"');
+      expect(page).toContain('property="og:image" content="https://spacecityhalloweenfest.com/og-image.jpg"');
+      expect(page).toContain('name="twitter:image" content="https://spacecityhalloweenfest.com/og-image.jpg"');
       expect(page).toContain('name="twitter:card" content="summary_large_image"');
     }
   });

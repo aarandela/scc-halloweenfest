@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 describe("site structure", () => {
@@ -46,12 +46,17 @@ describe("site structure", () => {
     expect(css.match(/font-display: swap/g)).toHaveLength(2);
   });
 
-  it("ships a social sharing image", () => {
-    expect(existsSync("public/og-image.png")).toBe(true);
+  it("ships an optimized social sharing image", () => {
+    expect(existsSync("public/og-image.jpg")).toBe(true);
+    expect(statSync("public/og-image.jpg").size).toBeLessThan(150_000);
   });
 
-  it("ships a downloadable calendar event", () => {
-    expect(existsSync("public/space-city-halloween-festival-2026.ics")).toBe(true);
+  it("ships a universally parsed UTC calendar event", () => {
+    const calendar = readFileSync("public/space-city-halloween-festival-2026.ics", "utf8");
+
+    expect(calendar).toContain("DTSTART:20261024T190000Z");
+    expect(calendar).toContain("DTEND:20261025T010000Z");
+    expect(calendar).not.toContain("TZID=");
   });
 
   it("ships crawler directives, a sitemap, and a real not-found page", () => {

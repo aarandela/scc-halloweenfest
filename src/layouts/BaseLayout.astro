@@ -13,7 +13,7 @@ interface Props {
 
 const { title, description, canonicalPath = "/", structuredData, noindex = false } = Astro.props;
 const canonicalUrl = Astro.site && canonicalPath ? new URL(canonicalPath, Astro.site) : undefined;
-const socialImageUrl = Astro.site ? new URL("/og-image.png", Astro.site).toString() : "/og-image.png";
+const socialImageUrl = Astro.site ? new URL("/og-image.jpg", Astro.site).toString() : "/og-image.jpg";
 ---
 
 <!doctype html>

@@ -12,8 +12,10 @@ Use these branded links for everyday sharing. They redirect to the tagged campai
 | Facebook page or event | `https://spacecityhalloweenfest.com/fb` |
 | TikTok profile | `https://spacecityhalloweenfest.com/tiktok` |
 | YouTube description | `https://spacecityhalloweenfest.com/youtube` |
+| Reddit post | `https://spacecityhalloweenfest.com/reddit` |
 | Sponsor outreach | `https://spacecityhalloweenfest.com/sponsor` |
 | Vendor outreach | `https://spacecityhalloweenfest.com/vendor` |
+| Printed QR code | `https://spacecityhalloweenfest.com/qr` |
 
 The full URLs remain useful when a separate `utm_content` value is needed for an individual post.
 
@@ -25,6 +27,7 @@ The full URLs remain useful when a separate `utm_content` value is needed for an
 | Facebook event | `https://spacecityhalloweenfest.com/?utm_source=facebook&utm_medium=social&utm_campaign=halloween-2026&utm_content=event-page` |
 | TikTok profile | `https://spacecityhalloweenfest.com/?utm_source=tiktok&utm_medium=social&utm_campaign=halloween-2026&utm_content=profile` |
 | YouTube description | `https://spacecityhalloweenfest.com/?utm_source=youtube&utm_medium=social&utm_campaign=halloween-2026&utm_content=video-description` |
+| Reddit post | `https://spacecityhalloweenfest.com/?utm_source=reddit&utm_medium=social&utm_campaign=halloween-2026&utm_content=post` |
 | Printed flyer or poster QR code | `https://spacecityhalloweenfest.com/?utm_source=print&utm_medium=qr&utm_campaign=halloween-2026&utm_content=event-flyer` |
 | Sponsor outreach email | `https://spacecityhalloweenfest.com/partners/?utm_source=email&utm_medium=outreach&utm_campaign=sponsorship-2026&utm_content=sponsor-invite` |
 | Vendor outreach email | `https://spacecityhalloweenfest.com/partners/?interest=vendor&utm_source=email&utm_medium=outreach&utm_campaign=vendor-recruitment-2026&utm_content=vendor-invite#inquiry` |

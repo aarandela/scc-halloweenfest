@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro check && astro build",
+    "generate:qr": "node scripts/generate-qr.mjs",
     "preview": "astro preview",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -18,6 +19,7 @@
     "@astrojs/check": "latest",
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.2.0",
+    "qrcode": "^1.5.4",
     "typescript": "latest",
     "vitest": "^3.2.4"
   }

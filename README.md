@@ -34,6 +34,8 @@ Approved event photography can be added to `src/data/eventPhotos.ts`. The galler
 
 The site self-hosts Latin WOFF2 builds of Barlow Condensed Italic and Inter in `public/fonts/` under the included SIL Open Font License files. The public event page also ships an `.ics` calendar download and a Google Calendar link.
 
+Print-ready SVG and PNG QR artwork points to the tracked `/qr` redirect. Regenerate both files after changing that short URL with `npm run generate:qr`.
+
 ## Form integration
 
 The sponsor/vendor form validates conditionally and submits directly to Web3Forms with a hidden bot-check field. Configure these environment variables in Cloudflare Pages under **Settings → Environment variables**:

@@ -102,11 +102,24 @@ test("campaign tags survive internal navigation and reach the inquiry form", asy
 });
 
 test("the pages do not overflow the viewport", async ({ page }) => {
-  for (const path of ["/", "/vendors/", "/partners/"]) {
-    await page.goto(path);
-    const overflows = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
-    expect(overflows).toBe(false);
+  for (const width of [320, 360, 375, 390, 430]) {
+    await page.setViewportSize({ width, height: 844 });
+    for (const path of ["/", "/vendors/", "/partners/", "/partners/thanks/"]) {
+      await page.goto(path);
+      const overflows = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
+      expect(overflows, `${path} overflows at ${width}px`).toBe(false);
+    }
   }
+});
+
+test("the homepage hero has no accidental center seam", async ({ page }) => {
+  await page.goto("/");
+
+  const background = await page.locator(".poster-hero").evaluate((hero) =>
+    getComputedStyle(hero, "::before").backgroundImage
+  );
+
+  expect(background).not.toContain("49.8%");
 });
 
 test("the supplied header artwork is visually centered in its crop", async ({ page }) => {

@@ -80,9 +80,31 @@ describe("site structure", () => {
       ? readFileSync("public/_redirects", "utf8")
       : "";
 
-    for (const path of ["/ig", "/fb", "/tiktok", "/youtube", "/sponsor", "/vendor"]) {
+    for (const path of ["/ig", "/fb", "/tiktok", "/youtube", "/reddit", "/sponsor", "/vendor", "/qr"]) {
       expect(redirects).toContain(`${path} https://spacecityhalloweenfest.com/`);
     }
-    expect(redirects.match(/ 302$/gm)).toHaveLength(12);
+    expect(redirects).toContain(
+      "/reddit https://spacecityhalloweenfest.com/?utm_source=reddit&utm_medium=social&utm_campaign=halloween-2026&utm_content=short-link 302"
+    );
+    expect(redirects).toContain(
+      "/qr https://spacecityhalloweenfest.com/?utm_source=print&utm_medium=qr&utm_campaign=halloween-2026&utm_content=event-flyer 302"
+    );
+    expect(redirects.match(/ 302$/gm)).toHaveLength(16);
+  });
+
+  it("ships print-ready QR artwork for the tracked print link", () => {
+    const svgPath = "public/space-city-halloween-festival-qr.svg";
+    const pngPath = "public/space-city-halloween-festival-qr.png";
+
+    expect(existsSync(svgPath)).toBe(true);
+    expect(existsSync(pngPath)).toBe(true);
+    if (existsSync(svgPath)) {
+      expect(readFileSync(svgPath, "utf8")).toContain("<svg");
+    }
+    if (existsSync(pngPath)) {
+      expect(readFileSync(pngPath).subarray(0, 8)).toEqual(
+        Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])
+      );
+    }
   });
 });

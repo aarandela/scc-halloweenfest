@@ -540,6 +540,10 @@ h3 {
   line-height: 1;
 }
 
+.not-found-mark span {
+  font-size: clamp(3.2rem, 8vw, 5.8rem);
+}
+
 .thanks-copy h1 {
   max-width: 46rem;
   margin-bottom: 1.5rem;

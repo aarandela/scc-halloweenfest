@@ -47,6 +47,47 @@ test("the inquiry form validates conditionally and sends through Web3Forms", asy
   await expect(page.getByRole("heading", { name: /we received your inquiry/i })).toBeVisible();
 });
 
+test("the inquiry submission normalizes values and omits inactive fields", async ({ page }) => {
+  let submittedBody = "";
+  await page.route("https://api.web3forms.com/submit", async (route) => {
+    submittedBody = route.request().postData() ?? "";
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ success: true })
+    });
+  });
+
+  await page.goto("/partners/?interest=vendor#inquiry");
+  await page.getByLabel(/your name/i).fill("  Jamie Rivera  ");
+  await page.getByLabel(/business name/i).fill("  Pearland Neighbors  ");
+  await page.getByLabel(/^email/i).fill("  JAMIE@EXAMPLE.COM  ");
+  await page.getByLabel(/what does your business offer/i).selectOption("Other");
+  await page.getByLabel(/describe what your business offers/i).fill("  Kids activity booth  ");
+
+  await page.getByRole("radio", { name: /sponsorship/i }).check();
+  await page.getByLabel(/sponsorship level/i).selectOption("community-supporter");
+  await page.getByLabel(/space city collective may contact me/i).check();
+  await page.locator('input[name="access_key"]').evaluate((input) => {
+    if (input instanceof HTMLInputElement) input.value = "test-access-key";
+  });
+  await page.locator("[data-inquiry-form]").evaluate((form) => {
+    if (form instanceof HTMLFormElement) {
+      form.dataset.configured = "true";
+      form.dataset.requiresTurnstile = "false";
+    }
+  });
+
+  await page.getByRole("button", { name: /send interest form/i }).click();
+  await expect(page).toHaveURL(/\/partners\/thanks\/$/);
+
+  expect(submittedBody).toContain('name="contactName"\r\n\r\nJamie Rivera');
+  expect(submittedBody).toContain('name="email"\r\n\r\njamie@example.com');
+  expect(submittedBody).toContain('name="sponsorTier"\r\n\r\ncommunity-supporter');
+  expect(submittedBody).not.toContain('name="vendorCategory"');
+  expect(submittedBody).not.toContain('name="vendorOtherDescription"');
+});
+
 test("campaign tags survive internal navigation and reach the inquiry form", async ({ page }) => {
   await page.goto(
     "/?utm_source=instagram&utm_medium=social&utm_campaign=halloween-2026&utm_content=costume-contest-post"
@@ -196,4 +237,11 @@ test("the unpublished vendor directory redirects without exposing samples", asyn
   await page.goto("/vendors/");
   await expect(page).toHaveURL(/\/$/);
   await expect(page.getByText("Sample lineup for demonstration")).toHaveCount(0);
+});
+
+test("unknown routes return the branded page with a real 404 status", async ({ page }) => {
+  const response = await page.goto("/nope");
+
+  expect(response?.status()).toBe(404);
+  await expect(page.getByRole("heading", { name: /this page wandered off/i })).toBeVisible();
 });

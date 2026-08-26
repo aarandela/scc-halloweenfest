@@ -151,7 +151,7 @@ const turnstileConfigured = Boolean(turnstileSiteKey);
 )}
 
 <script>
-  import { validateInquiry, type InquiryInput } from "../lib/inquiry";
+  import { prepareInquiry, validateInquiry, type InquiryInput } from "../lib/inquiry";
 
   const form = document.querySelector<HTMLFormElement>("[data-inquiry-form]");
 
@@ -180,6 +180,14 @@ const turnstileConfigured = Boolean(turnstileSiteKey);
       if (sponsorFields) sponsorFields.hidden = !isSponsor;
       if (vendorFields) vendorFields.hidden = isSponsor;
       if (vendorOtherFields) vendorOtherFields.hidden = !isOtherVendor;
+      sponsorFields?.querySelectorAll<HTMLInputElement | HTMLSelectElement>("input, select").forEach((control) => {
+        control.disabled = !isSponsor;
+      });
+      vendorFields?.querySelectorAll<HTMLInputElement | HTMLSelectElement>("input, select").forEach((control) => {
+        control.disabled = isSponsor;
+      });
+      const vendorOtherInput = getInput("vendorOtherDescription");
+      if (vendorOtherInput) vendorOtherInput.disabled = !isOtherVendor;
       getInput("sponsorTier")?.toggleAttribute("aria-required", isSponsor);
       getInput("vendorCategory")?.toggleAttribute("aria-required", !isSponsor);
       getInput("vendorOtherDescription")?.toggleAttribute("aria-required", isOtherVendor);
@@ -265,10 +273,34 @@ const turnstileConfigured = Boolean(turnstileSiteKey);
       }
 
       try {
+        const prepared = prepareInquiry(input);
+        const payload = new FormData(form);
+        for (const [name, value] of Object.entries(prepared)) {
+          payload.set(name, String(value));
+        }
+
+        if (input.inquiryType === "sponsor") {
+          payload.delete("vendorCategory");
+          payload.delete("vendorOtherDescription");
+        } else {
+          payload.delete("sponsorTier");
+          if (input.vendorCategory !== "Other") payload.delete("vendorOtherDescription");
+        }
+
+        for (const name of [
+          "campaign_source",
+          "campaign_medium",
+          "campaign_name",
+          "campaign_content",
+          "campaign_landing_page"
+        ]) {
+          if (!String(payload.get(name) ?? "").trim()) payload.delete(name);
+        }
+
         const response = await fetch(form.action, {
           method: "POST",
           headers: { Accept: "application/json" },
-          body: new FormData(form)
+          body: payload
         });
         const result = await response.json().catch(() => null) as { success?: boolean } | null;
         if (!response.ok || !result?.success) throw new Error(`Web3Forms returned ${response.status}`);

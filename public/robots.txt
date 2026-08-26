@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /partners/thanks/
+
+Sitemap: https://spacecityhalloweenfest.com/sitemap.xml

@@ -6,13 +6,13 @@ import "../styles/global.css";
 interface Props {
   title: string;
   description: string;
-  canonicalPath?: string;
+  canonicalPath?: string | null;
   structuredData?: Record<string, unknown>;
   noindex?: boolean;
 }
 
 const { title, description, canonicalPath = "/", structuredData, noindex = false } = Astro.props;
-const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site) : undefined;
+const canonicalUrl = Astro.site && canonicalPath ? new URL(canonicalPath, Astro.site) : undefined;
 const socialImageUrl = Astro.site ? new URL("/og-image.png", Astro.site).toString() : "/og-image.png";
 ---
 

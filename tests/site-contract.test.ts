@@ -53,4 +53,10 @@ describe("site structure", () => {
   it("ships a downloadable calendar event", () => {
     expect(existsSync("public/space-city-halloween-festival-2026.ics")).toBe(true);
   });
+
+  it("ships crawler directives, a sitemap, and a real not-found page", () => {
+    expect(existsSync("public/robots.txt")).toBe(true);
+    expect(existsSync("public/sitemap.xml")).toBe(true);
+    expect(existsSync("src/pages/404.astro")).toBe(true);
+  });
 });

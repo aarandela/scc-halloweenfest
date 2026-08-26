@@ -74,7 +74,15 @@ No contact details or free-form inquiry text are sent to analytics.
 
 ## Production metadata
 
-Set `SITE` to the final public origin, such as `https://festival.example.com`, so Astro can emit canonical and absolute social-image URLs. The 1200 × 630 sharing image lives at `public/og-image.png`.
+Set `SITE=https://spacecityhalloweenfest.com` in both the Production and Preview environments. The build also uses that origin as a safe default, so canonical links and social-image URLs remain absolute if the variable is accidentally omitted. The 1200 × 630 sharing image lives at `public/og-image.png`.
+
+Use account-level Cloudflare Bulk Redirects to keep one public host:
+
+- `https://www.spacecityhalloweenfest.com` → `https://spacecityhalloweenfest.com` (`301`)
+- `https://scc-halloweenfest.pages.dev` → `https://spacecityhalloweenfest.com` (`301`)
+
+For both entries, enable **Preserve query string**, **Subpath matching**, and **Preserve path suffix**. Domain redirects cannot be implemented in a Pages `_redirects` file.
+
+The repository includes `robots.txt`, `sitemap.xml`, and a branded `404.html`. If Cloudflare's Email Address Obfuscation is not wanted for the form's email fallback, turn it off under **Security → Settings** for the zone.
 
 For Cloudflare Pages, use `npm run build` as the build command and `dist` as the output directory.
-# scc-halloweenfest

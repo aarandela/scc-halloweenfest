@@ -1,0 +1,38 @@
+---
+import Icon from "../components/Icon.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { event } from "../data/event";
+
+const description = `The requested page could not be found on the ${event.name} website.`;
+---
+
+<BaseLayout
+  title={`Page Not Found | ${event.name}`}
+  {description}
+  canonicalPath={null}
+  noindex
+>
+  <main id="main-content" class="thanks-page error-page">
+    <section class="thanks-panel" aria-labelledby="not-found-title">
+      <div class="container thanks-grid">
+        <div class="thanks-mark not-found-mark" aria-hidden="true">
+          <span>404</span>
+        </div>
+        <div class="thanks-copy">
+          <p class="eyebrow">Page not found</p>
+          <h1 id="not-found-title">This page wandered off.</h1>
+          <p class="hero-lede">
+            The address may be outdated or mistyped. The festival guide has the current event details.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="/">
+              Return to the event guide <Icon name="arrow" size={17} />
+            </a>
+            <a class="button button-secondary" href="/partners/">Business opportunities</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+

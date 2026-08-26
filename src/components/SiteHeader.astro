@@ -7,6 +7,7 @@ interface Props {
 
 const { currentPath } = Astro.props;
 const onPartners = currentPath.startsWith("/partners");
+const onPartnerLanding = currentPath === "/partners" || currentPath === "/partners/";
 const onVendors = currentPath.startsWith("/vendors");
 ---
 
@@ -45,11 +46,11 @@ const onVendors = currentPath.startsWith("/vendors");
 
     <a
       class="button button-small header-cta"
-      href={onPartners ? "#inquiry" : "/partners/"}
-      data-track-event={onPartners ? "inquiry_cta_clicked" : "partner_cta_clicked"}
+      href={onPartnerLanding ? "#inquiry" : "/partners/#inquiry"}
+      data-track-event={onPartnerLanding ? "inquiry_cta_clicked" : "partner_cta_clicked"}
       data-track-placement="site_header"
     >
-      {onPartners ? "Send an inquiry" : "Partner with us"}
+      {onPartnerLanding ? "Send an inquiry" : "Partner with us"}
     </a>
   </div>
 </header>

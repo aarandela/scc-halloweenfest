@@ -5,6 +5,9 @@ import { beforeAll, describe, expect, it } from "vitest";
 let home = "";
 let partners = "";
 let inquiryThanks = "";
+let notFound = "";
+let robots = "";
+let sitemap = "";
 let vendorDirectory = "";
 
 beforeAll(() => {
@@ -19,6 +22,9 @@ beforeAll(() => {
   home = readFileSync("dist/index.html", "utf8");
   partners = readFileSync("dist/partners/index.html", "utf8");
   inquiryThanks = readFileSync("dist/partners/thanks/index.html", "utf8");
+  notFound = readFileSync("dist/404.html", "utf8");
+  robots = readFileSync("dist/robots.txt", "utf8");
+  sitemap = readFileSync("dist/sitemap.xml", "utf8");
   vendorDirectory = readFileSync("dist/vendors/index.html", "utf8");
 }, 60_000);
 
@@ -149,6 +155,25 @@ describe("inquiry conversion page", () => {
     expect(inquiryThanks).toContain("We received your inquiry.");
     expect(inquiryThanks).toContain('name="robots" content="noindex, nofollow"');
     expect(inquiryThanks).not.toContain("data-inquiry-form");
+    expect(inquiryThanks).toContain('class="button button-small header-cta" href="/partners/#inquiry"');
+    expect(inquiryThanks).not.toContain('class="button button-small header-cta" href="#inquiry"');
+  });
+});
+
+describe("crawler and error responses", () => {
+  it("publishes crawler directives and only indexable routes in the sitemap", () => {
+    expect(robots).toContain("Sitemap: https://spacecityhalloweenfest.com/sitemap.xml");
+    expect(robots).toContain("Disallow: /partners/thanks/");
+    expect(sitemap).toContain("https://spacecityhalloweenfest.com/");
+    expect(sitemap).toContain("https://spacecityhalloweenfest.com/partners/");
+    expect(sitemap).not.toContain("/partners/thanks/");
+    expect(sitemap).not.toContain("/vendors/");
+  });
+
+  it("builds a branded, no-index 404 document", () => {
+    expect(notFound).toContain("This page wandered off.");
+    expect(notFound).toContain('name="robots" content="noindex, nofollow"');
+    expect(notFound).not.toContain('rel="canonical"');
   });
 });
 
@@ -185,10 +210,11 @@ describe("shared site credit", () => {
 });
 
 describe("social sharing metadata", () => {
-  it("uses a large image preview on every page", () => {
+  it("uses canonical URLs and absolute large-image previews on every indexable page", () => {
     for (const page of [home, partners]) {
-      expect(page).toContain('property="og:image"');
-      expect(page).toContain('/og-image.png');
+      expect(page).toMatch(/<link rel="canonical" href="https:\/\/spacecityhalloweenfest\.com(?:\/|\/partners\/)"/);
+      expect(page).toContain('property="og:image" content="https://spacecityhalloweenfest.com/og-image.png"');
+      expect(page).toContain('name="twitter:image" content="https://spacecityhalloweenfest.com/og-image.png"');
       expect(page).toContain('name="twitter:card" content="summary_large_image"');
     }
   });

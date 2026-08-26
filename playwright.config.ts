@@ -13,9 +13,9 @@ export default defineConfig({
     { name: "mobile-chromium", use: { ...devices["Pixel 5"] } }
   ],
   webServer: process.env.PLAYWRIGHT_USE_EXISTING_SERVER
-    ? undefined
-    : {
-        command: "python3 -m http.server 8000 --directory dist",
+      ? undefined
+      : {
+        command: "ASTRO_PREVIEW_BACKGROUND=0 npm run preview -- --host 127.0.0.1 --port 8000",
         url: "http://127.0.0.1:8000",
         reuseExistingServer: true
       }

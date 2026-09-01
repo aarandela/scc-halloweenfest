@@ -4,6 +4,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 
 let home = "";
 let partners = "";
+let privacy = "";
 let inquiryThanks = "";
 let notFound = "";
 let robots = "";
@@ -21,6 +22,7 @@ beforeAll(() => {
   });
   home = readFileSync("dist/index.html", "utf8");
   partners = readFileSync("dist/partners/index.html", "utf8");
+  privacy = readFileSync("dist/privacy/index.html", "utf8");
   inquiryThanks = readFileSync("dist/partners/thanks/index.html", "utf8");
   notFound = readFileSync("dist/404.html", "utf8");
   robots = readFileSync("dist/robots.txt", "utf8");
@@ -131,6 +133,7 @@ describe("partner page", () => {
     expect(partners).toContain('name="businessName"');
     expect(partners).toContain('name="email"');
     expect(partners).toContain('aria-live="polite"');
+    expect(partners).toContain('href="/privacy/"');
     for (const name of [
       "campaign_source",
       "campaign_medium",
@@ -163,6 +166,48 @@ describe("partner page", () => {
     expect(partners).toContain("Apparel and accessories displayed at a festival vendor booth");
     expect(partners).toContain("Sneakers displayed across a festival vendor table");
     expect(partners).not.toContain('class="vendor-type"');
+  });
+});
+
+describe("privacy notice", () => {
+  it("plainly explains the site's data practices and service providers", () => {
+    for (const content of [
+      "Privacy Policy",
+      "Information you provide",
+      "Analytics and campaign measurement",
+      "Web3Forms",
+      "Google Analytics",
+      "Cloudflare",
+      "Google Maps",
+      "We do not sell your personal information",
+      "Children’s privacy",
+      "audy@arandela.co"
+    ]) {
+      expect(privacy).toContain(content);
+    }
+    expect(privacy).toContain('rel="canonical" href="https://spacecityhalloweenfest.com/privacy/"');
+    expect(privacy.match(/mailto:audy@arandela\.co/g)).toHaveLength(2);
+    expect(privacy).toContain("Arandela &amp; Co. operates and maintains this website");
+    expect(privacy).toContain("Space City Collective receives sponsor and vendor inquiries");
+  });
+
+  it("is linked from the shared footer on every public page", () => {
+    for (const page of [home, partners, privacy]) {
+      expect(page).toContain('href="/privacy/"');
+      expect(page).toContain(">Privacy<");
+    }
+  });
+
+  it("preserves readable spacing around inline privacy links", () => {
+    for (const textBeforeLink of [
+      "Learn more about <a",
+      "Google also provides a <a",
+      "deletion by emailing <a",
+      "privacy requests may be sent to <a"
+    ]) {
+      expect(privacy).toContain(textBeforeLink);
+    }
+    expect(partners).toContain("See our <a");
   });
 });
 

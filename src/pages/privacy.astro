@@ -1,0 +1,164 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { event } from "../data/event";
+
+const description = `Learn how Arandela & Co. collects, uses, and protects information submitted through the ${event.name} website.`;
+---
+
+<BaseLayout title={`Privacy Policy | ${event.name}`} {description} canonicalPath="/privacy/">
+  <main id="main-content" class="legal-page">
+    <header class="legal-hero">
+      <div class="container legal-hero-inner">
+        <p class="eyebrow">Your information</p>
+        <h1>Privacy Policy</h1>
+        <p class="hero-lede">
+          A plain-language explanation of what this festival website collects and why.
+        </p>
+        <p class="legal-effective">Effective August 31, 2026</p>
+      </div>
+    </header>
+
+    <div class="container legal-layout">
+      <aside class="legal-summary" aria-labelledby="summary-title">
+        <p class="eyebrow" id="summary-title">The short version</p>
+        <p>
+          We use information to answer festival business inquiries, operate the website, prevent spam,
+          and understand which outreach helps people find the event. We do not sell your personal information.
+        </p>
+      </aside>
+
+      <article class="legal-content">
+        <section aria-labelledby="scope-title">
+          <h2 id="scope-title">Who this policy covers</h2>
+          <p>
+            This policy applies to the {event.name} website. Arandela &amp; Co. operates and maintains this website,
+            manages its analytics, and handles website privacy requests. Space City Collective receives sponsor and
+            vendor inquiries submitted through the website so its team can respond about festival participation.
+          </p>
+        </section>
+
+        <section aria-labelledby="provided-title">
+          <h2 id="provided-title">Information you provide</h2>
+          <p>When you submit the sponsor or vendor interest form, we may collect:</p>
+          <ul>
+            <li>Your name, business name, and email address.</li>
+            <li>An optional phone number, website, or social profile.</li>
+            <li>Your sponsorship or vendor interests and any message you include.</li>
+            <li>Campaign details associated with the link that brought you to the website.</li>
+          </ul>
+          <p>
+            The business inquiry form is voluntary. Please do not submit sensitive personal information through it.
+          </p>
+        </section>
+
+        <section aria-labelledby="automatic-title">
+          <h2 id="automatic-title">Analytics and campaign measurement</h2>
+          <p>
+            The website uses Google Analytics through Cloudflare Zaraz to measure visits and actions such as
+            opening directions, adding the event to a calendar, following a social link, or submitting an inquiry.
+            Analytics may process information such as your device and browser type, approximate location, referring
+            page, pages viewed, and website interactions. We do not intentionally send names, email addresses,
+            phone numbers, or form messages to Google Analytics.
+          </p>
+          <p>
+            Links shared in social posts, emails, and printed QR codes may contain campaign parameters. These help
+            us understand which outreach brought visitors to the website and may be included with a business inquiry.
+          </p>
+          <p>
+            Learn more about{" "}
+            <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noreferrer">how Google uses information from sites that use its services</a>.
+            Google also provides a{" "}
+            <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noreferrer">Google Analytics opt-out browser add-on</a>.
+          </p>
+        </section>
+
+        <section aria-labelledby="providers-title">
+          <h2 id="providers-title">Services that help operate the website</h2>
+          <p>We use a limited number of service providers:</p>
+          <ul>
+            <li><strong>Cloudflare</strong> hosts and protects the website, provides analytics through Zaraz, and uses Turnstile to distinguish people from automated form submissions.</li>
+            <li><strong>Web3Forms</strong> processes and delivers sponsor and vendor inquiries to the festival team.</li>
+            <li><strong>Google Analytics</strong> provides website and campaign measurement.</li>
+            <li><strong>Google Maps</strong> supplies the embedded venue map and directions.</li>
+          </ul>
+          <p>
+            These providers may process technical information such as IP address, browser details, and request
+            timestamps as necessary to deliver, secure, or measure their services. Web3Forms may retain submissions
+            for up to three years under its published retention schedule, unless they are deleted sooner.
+          </p>
+        </section>
+
+        <section aria-labelledby="use-title">
+          <h2 id="use-title">How information is used</h2>
+          <p>We use information collected through this website to:</p>
+          <ul>
+            <li>Respond to sponsor and vendor inquiries.</li>
+            <li>Coordinate participation in the festival.</li>
+            <li>Operate, secure, troubleshoot, and improve the website.</li>
+            <li>Measure attendance interest and the effectiveness of event outreach.</li>
+            <li>Maintain records reasonably needed for festival administration or legal obligations.</li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="sharing-title">
+          <h2 id="sharing-title">Sharing and selling information</h2>
+          <p>
+            We do not sell your personal information or use it for targeted advertising. Information may be shared
+            with the festival team, Arandela &amp; Co., and the service providers described above only as needed to
+            operate the website, deliver inquiries, measure outreach, comply with law, or protect the website and its users.
+          </p>
+        </section>
+
+        <section aria-labelledby="retention-title">
+          <h2 id="retention-title">Retention and security</h2>
+          <p>
+            Inquiry information is kept only as long as reasonably needed to respond, coordinate the festival,
+            maintain an ongoing business relationship, or meet legal and recordkeeping obligations. Analytics data
+            is retained according to the settings of the analytics services we use. We use reasonable administrative
+            and technical safeguards, but no internet transmission or storage system can be guaranteed completely secure.
+          </p>
+        </section>
+
+        <section aria-labelledby="choices-title">
+          <h2 id="choices-title">Your choices</h2>
+          <p>
+            You may ask what inquiry information we have about you or request a correction or deletion by emailing{" "}
+            <a href={`mailto:${event.privacyEmail}?subject=Website%20privacy%20request`}>{event.privacyEmail}</a>.
+            We may need to verify your identity before completing a request, and some records may be retained when
+            reasonably required by law or legitimate business needs.
+          </p>
+          <p>
+            You can also limit cookies through your browser settings. Blocking some services may affect the embedded
+            map, analytics, or form security features.
+          </p>
+        </section>
+
+        <section aria-labelledby="children-title">
+          <h2 id="children-title">Children’s privacy</h2>
+          <p>
+            The festival welcomes families, but the website’s sponsor and vendor form is intended for adults and
+            businesses. We do not knowingly collect personal information online from children under 13. A parent or
+            guardian who believes a child submitted personal information may contact us to request its deletion.
+          </p>
+        </section>
+
+        <section aria-labelledby="links-title">
+          <h2 id="links-title">External websites</h2>
+          <p>
+            The website links to services and social profiles operated by other organizations. Their privacy practices
+            are governed by their own policies, not this one.
+          </p>
+        </section>
+
+        <section aria-labelledby="updates-title">
+          <h2 id="updates-title">Policy updates and contact</h2>
+          <p>
+            We may update this policy when the website or its services change. The effective date above will identify
+            the latest version. Questions or privacy requests may be sent to{" "}
+            <a href={`mailto:${event.privacyEmail}`}>{event.privacyEmail}</a>.
+          </p>
+        </section>
+      </article>
+    </div>
+  </main>
+</BaseLayout>

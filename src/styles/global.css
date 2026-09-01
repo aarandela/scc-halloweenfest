@@ -1565,6 +1565,16 @@ h3 {
   accent-color: var(--orange);
 }
 
+.consent a {
+  color: #eadcf0;
+  text-decoration-color: rgb(234 220 240 / 50%);
+  text-underline-offset: 0.18em;
+}
+
+.consent a:hover {
+  color: var(--orange);
+}
+
 .honeypot {
   position: absolute !important;
   width: 1px !important;
@@ -1832,6 +1842,134 @@ h3 {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+}
+
+/* Privacy policy */
+.legal-page {
+  background:
+    radial-gradient(circle at 88% 8%, rgb(112 76 130 / 24%), transparent 28rem),
+    var(--night);
+}
+
+.legal-hero {
+  padding-block: clamp(4.5rem, 10vw, 8rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.legal-hero-inner {
+  max-width: 74rem;
+}
+
+.legal-hero h1 {
+  max-width: 55rem;
+  margin: 0.7rem 0 1rem;
+  font-family: var(--headline);
+  font-size: clamp(4.5rem, 11vw, 9rem);
+  font-style: italic;
+  letter-spacing: -0.045em;
+  line-height: 0.86;
+  text-transform: uppercase;
+  text-shadow: 0.055em 0.055em 0 var(--purple);
+}
+
+.legal-effective {
+  margin: 1.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.legal-layout {
+  display: grid;
+  grid-template-columns: minmax(13rem, 0.42fr) minmax(0, 1fr);
+  gap: clamp(3rem, 8vw, 8rem);
+  padding-block: clamp(4rem, 9vw, 8rem);
+}
+
+.legal-summary {
+  position: sticky;
+  top: 7rem;
+  align-self: start;
+  padding-top: 1.25rem;
+  border-top: 3px solid var(--orange);
+}
+
+.legal-summary p:last-child {
+  margin-bottom: 0;
+  color: #b8adb6;
+  font-size: 0.9rem;
+}
+
+.legal-content {
+  max-width: 48rem;
+}
+
+.legal-content section + section {
+  margin-top: 3.25rem;
+  padding-top: 3.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.legal-content h2 {
+  margin-bottom: 1rem;
+  font-family: var(--headline);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-style: italic;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.legal-content p,
+.legal-content li {
+  color: #b8adb6;
+  font-size: 0.9rem;
+  line-height: 1.75;
+}
+
+.legal-content p {
+  margin-block: 0 1rem;
+}
+
+.legal-content ul {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.legal-content li::marker {
+  color: var(--orange);
+}
+
+.legal-content strong {
+  color: var(--paper);
+}
+
+.legal-content a {
+  color: #eadcf0;
+  text-decoration-color: rgb(234 220 240 / 50%);
+  text-underline-offset: 0.18em;
+}
+
+.legal-content a:hover {
+  color: var(--orange);
+}
+
+@media (max-width: 720px) {
+  .legal-hero h1 {
+    font-size: clamp(4rem, 20vw, 6.25rem);
+  }
+
+  .legal-layout {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .legal-summary {
+    position: static;
+  }
 }
 
 /* Editorial poster pass: sharp, typographic, and deliberately less app-like. */

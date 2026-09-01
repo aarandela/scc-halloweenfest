@@ -10,6 +10,13 @@ describe("site structure", () => {
     expect(existsSync("src/pages/partners.astro")).toBe(true);
   });
 
+  it("provides a public privacy policy", () => {
+    expect(existsSync("src/pages/privacy.astro")).toBe(true);
+
+    const sitemap = readFileSync("public/sitemap.xml", "utf8");
+    expect(sitemap).toContain("https://spacecityhalloweenfest.com/privacy/");
+  });
+
   it("provides centralized event content", () => {
     expect(existsSync("src/data/event.ts")).toBe(true);
   });
@@ -117,16 +124,23 @@ describe("site structure", () => {
       ? readFileSync("public/_redirects", "utf8")
       : "";
 
-    for (const path of ["/ig", "/fb", "/tiktok", "/youtube", "/reddit", "/sponsor", "/vendor", "/qr"]) {
+    for (const path of ["/ig", "/fb", "/tiktok", "/youtube", "/reddit", "/email", "/sponsor", "/vendor", "/qr"]) {
       expect(redirects).toContain(`${path} https://spacecityhalloweenfest.com/`);
     }
     expect(redirects).toContain(
       "/reddit https://spacecityhalloweenfest.com/?utm_source=reddit&utm_medium=social&utm_campaign=halloween-2026&utm_content=short-link 302"
     );
     expect(redirects).toContain(
+      "/email https://spacecityhalloweenfest.com/?utm_source=email&utm_medium=email&utm_campaign=halloween-2026&utm_content=short-link 302"
+    );
+    // GA4's default channel grouping keys off utm_medium: "email" maps to the
+    // Email channel, "outreach" matches nothing and falls into Unassigned.
+    expect(redirects).not.toContain("utm_medium=outreach");
+    expect(redirects).not.toContain("utm_source=direct");
+    expect(redirects).toContain(
       "/qr https://spacecityhalloweenfest.com/?utm_source=print&utm_medium=qr&utm_campaign=halloween-2026&utm_content=event-flyer 302"
     );
-    expect(redirects.match(/ 302$/gm)).toHaveLength(16);
+    expect(redirects.match(/ 302$/gm)).toHaveLength(18);
   });
 
   it("ships print-ready QR artwork for the tracked print link", () => {

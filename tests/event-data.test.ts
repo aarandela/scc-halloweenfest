@@ -30,6 +30,10 @@ describe("event content", () => {
     expect(event.socialHandle).toBe("@space_citycollective");
     expect(event.instagramUrl).toBe("https://www.instagram.com/space_citycollective/");
   });
+
+  it("keeps website privacy requests with Arandela & Co.", () => {
+    expect(event.privacyEmail).toBe("audy@arandela.co");
+  });
 });
 
 describe("sponsorship content", () => {
